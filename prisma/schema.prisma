@@ -1,0 +1,371 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InspectionStatus {
+  draft
+  ready_for_quote
+  sent
+  archived
+}
+
+enum PriceCategory {
+  material
+  prace
+}
+
+enum LineItemSection {
+  main
+  nad_ramec
+}
+
+enum LineItemSource {
+  auto_calculated
+  manual
+}
+
+enum ChecklistItemCategory {
+  material
+  prace
+  ine
+}
+
+enum ChecklistItemSource {
+  system_default
+  custom_added
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  name           String
+  address        String?
+  siteAddress    String?  @map("site_address")
+  phone          String?
+  email          String?
+  buildingAdmin  String?  @map("building_admin")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  inspections    Inspection[]
+  webInquiries   WebInquiry[]
+
+  @@map("customers")
+}
+
+// Captured inquiries from tmshydra.com (kalkulačka / booking) for linking to a new inspection.
+model WebInquiry {
+  id            String    @id @default(cuid())
+  customerId    String?   @map("customer_id")
+  name          String
+  email         String
+  phone         String?
+  address       String?
+  message       String?
+  source        String? // e.g. "calculator" | "booking"
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  customer      Customer?    @relation(fields: [customerId], references: [id])
+  inspection    Inspection?
+
+  @@map("web_inquiries")
+}
+
+model Technician {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  inspections Inspection[]
+
+  @@map("technicians")
+}
+
+model Inspection {
+  id                      String            @id @default(cuid())
+  customerId              String            @map("customer_id")
+  technicianId            String?           @map("technician_id")
+  webInquiryId            String?           @unique @map("web_inquiry_id")
+  referenceNumber         String            @unique @map("reference_number")
+  inspectionDate          DateTime?         @map("inspection_date")
+  inspectionTime          String?           @map("inspection_time")
+  reminderSentAt          DateTime?         @map("reminder_sent_at")
+  areaM2                  Decimal?          @map("area_m2") @db.Decimal(10, 2)
+  currentStateDescription String?           @map("current_state_description")
+  isInsulated             Boolean?          @map("is_insulated")
+  status                  InspectionStatus  @default(draft)
+  createdAt               DateTime          @default(now()) @map("created_at")
+  updatedAt               DateTime          @updatedAt @map("updated_at")
+
+  customer                Customer          @relation(fields: [customerId], references: [id])
+  technician              Technician?       @relation(fields: [technicianId], references: [id])
+  webInquiry              WebInquiry?       @relation(fields: [webInquiryId], references: [id])
+
+  roofEdges               RoofEdge[]
+  roofAreaSections        RoofAreaSection[]
+  photos                  InspectionPhoto[]
+  sketch                  InspectionSketch?
+  technicalSolutionItems  TechnicalSolutionItem[]
+  drainDownspouts         DrainDownspout[]
+  gutterSystemItems       GutterSystemItem[]
+  additionalServices      AdditionalService[]
+  quoteAlternatives       QuoteAlternative[]
+
+  @@map("inspections")
+}
+
+model RoofEdge {
+  id             String  @id @default(cuid())
+  inspectionId   String  @map("inspection_id")
+  label          String
+  lengthM        Decimal @map("length_m") @db.Decimal(10, 2)
+  atikaHeightCm  Decimal? @map("atika_height_cm") @db.Decimal(10, 2)
+  sequenceOrder  Int     @default(0) @map("sequence_order")
+
+  inspection     Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("roof_edges")
+}
+
+model RoofAreaSection {
+  id           String  @id @default(cuid())
+  inspectionId String  @map("inspection_id")
+  label        String
+  widthM       Decimal @map("width_m") @db.Decimal(10, 2)
+  heightM      Decimal @map("height_m") @db.Decimal(10, 2)
+  areaM2       Decimal @map("area_m2") @db.Decimal(10, 2)
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("roof_area_sections")
+}
+
+model InspectionPhoto {
+  id           String   @id @default(cuid())
+  inspectionId String   @map("inspection_id")
+  url          String
+  caption      String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("inspection_photos")
+}
+
+// One inspection has at most one sketch: either a photographed drawing/upload, or structured sketch data.
+model InspectionSketch {
+  id           String   @id @default(cuid())
+  inspectionId String   @unique @map("inspection_id")
+  fileUrl      String?  @map("file_url")
+  sketchJson   Json?    @map("sketch_json")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("inspection_sketch")
+}
+
+// Majiteľ si vie sám pridávať položky checklistu (single-tenant appka — žiadny
+// schvaľovací proces). Ceny sa do ponuky preberajú ako jednorazový snapshot
+// (quote_line_items.unit_price_snapshot), takže zmena default_unit_price tu
+// nikdy neovplyvní už vytvorené ponuky.
+model ChecklistItemCatalog {
+  id               String                @id @default(cuid())
+  name             String
+  unit             String
+  defaultUnitPrice Decimal               @map("default_unit_price") @db.Decimal(10, 2)
+  category         ChecklistItemCategory
+  isActive         Boolean               @default(true) @map("is_active")
+  source           ChecklistItemSource   @default(custom_added)
+  createdAt        DateTime              @default(now()) @map("created_at")
+
+  technicalSolutionItems TechnicalSolutionItem[]
+
+  @@map("checklist_item_catalog")
+}
+
+model TechnicalSolutionItem {
+  id            String   @id @default(cuid())
+  inspectionId  String   @map("inspection_id")
+  catalogItemId String   @map("catalog_item_id")
+  isChecked     Boolean  @default(false) @map("is_checked")
+  valueNumber   Decimal? @map("value_number") @db.Decimal(10, 2)
+  notes         String?
+
+  inspection    Inspection            @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  catalogItem   ChecklistItemCatalog  @relation(fields: [catalogItemId], references: [id])
+
+  @@unique([inspectionId, catalogItemId])
+  @@map("technical_solution_items")
+}
+
+model DrainDownspout {
+  id           String  @id @default(cuid())
+  inspectionId String  @map("inspection_id")
+  label        String
+  lengthM      Decimal @map("length_m") @db.Decimal(10, 2)
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("drain_downspouts")
+}
+
+model GutterSystemItem {
+  id           String  @id @default(cuid())
+  inspectionId String  @map("inspection_id")
+  itemType     String  @map("item_type") // haky | zlab | kotlik | cela | zvod | kolena | objimky | okap_plech | tmel | rohy
+  quantity     Decimal @db.Decimal(10, 2)
+  unit         String
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("gutter_system_items")
+}
+
+model AdditionalService {
+  id           String  @id @default(cuid())
+  inspectionId String  @map("inspection_id")
+  description  String
+  photoUrl     String? @map("photo_url")
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("additional_services")
+}
+
+// Definition of a roof composition alternative (A/B) — layers, matching work steps and warranty.
+model MaterialComposition {
+  id                 String   @id @default(cuid())
+  name               String
+  layersJson         Json     @map("layers_json")
+  workStepsTemplate  String?  @map("work_steps_template")
+  warrantyYears      Int?     @map("warranty_years")
+  featuredProductId  String?  @map("featured_product_id")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  featuredProduct    MaterialProduct?    @relation(fields: [featuredProductId], references: [id])
+  quoteAlternatives  QuoteAlternative[]
+
+  @@map("material_compositions")
+}
+
+// Reusable library of technical product descriptions (e.g. "BITUTOP APAO") for reuse across documents.
+model MaterialProduct {
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  compositions MaterialComposition[]
+
+  @@map("material_products")
+}
+
+model PriceListItem {
+  id        String        @id @default(cuid())
+  itemKey   String        @map("item_key")
+  unit      String
+  unitPrice Decimal       @map("unit_price") @db.Decimal(10, 2)
+  category  PriceCategory
+  validFrom DateTime      @map("valid_from")
+
+  @@map("price_list")
+}
+
+// Single row of company info — single-tenant, no multi-tenant scoping.
+model CompanySettings {
+  id       String  @id @default(cuid())
+  ico      String?
+  dic      String?
+  iban     String?
+  bic      String?
+  address  String?
+  email    String?
+  phone    String?
+  logoUrl  String? @map("logo_url")
+
+  @@map("company_settings")
+}
+
+model QuoteAlternative {
+  id                     String   @id @default(cuid())
+  inspectionId           String   @map("inspection_id")
+  materialCompositionId  String?  @map("material_composition_id")
+  label                  String // e.g. "A" | "B"
+  description            String? // e.g. "zo zateplením"
+  discountPercent        Decimal  @default(0) @map("discount_percent") @db.Decimal(5, 2)
+  totalPrice             Decimal? @map("total_price") @db.Decimal(10, 2)
+  issuedDate             DateTime? @map("issued_date")
+  validUntil             DateTime? @map("valid_until")
+  warrantyYears          Int?      @map("warranty_years")
+  realizationStartDate   DateTime? @map("realization_start_date")
+  realizationEndDate     DateTime? @map("realization_end_date")
+  realizationStartTime   String?  @map("realization_start_time")
+  realizationEndTime     String?  @map("realization_end_time")
+  reminderSentAt         DateTime? @map("reminder_sent_at")
+  warrantyReminderSentAt DateTime? @map("warranty_reminder_sent_at")
+  documentUrl            String?  @map("document_url")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  inspection             Inspection            @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  materialComposition    MaterialComposition?  @relation(fields: [materialCompositionId], references: [id])
+  lineItems              QuoteLineItem[]
+
+  @@unique([inspectionId, label])
+  @@map("quote_alternatives")
+}
+
+model QuoteLineItem {
+  id                  String           @id @default(cuid())
+  quoteAlternativeId  String           @map("quote_alternative_id")
+  description         String
+  plannedQty          Decimal?         @map("planned_qty") @db.Decimal(10, 2)
+  wastePercent        Decimal?         @map("waste_percent") @db.Decimal(5, 2)
+  unit                String           @default("ks")
+  unitPriceSnapshot    Decimal         @map("unit_price_snapshot") @db.Decimal(10, 2)
+  total               Decimal          @db.Decimal(10, 2)
+  section             LineItemSection  @default(main)
+  source              LineItemSource   @default(auto_calculated)
+  sequenceOrder       Int              @default(0) @map("sequence_order")
+
+  quoteAlternative    QuoteAlternative @relation(fields: [quoteAlternativeId], references: [id], onDelete: Cascade)
+
+  @@map("quote_line_items")
+}
+
+// Static text blocks (company story, advantages, email templates) editable without touching app code.
+model DocumentTemplate {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  content   String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("document_templates")
+}
+
+// Calendar entries not tied to any zákazka (e.g. "nákup materiálu", "stretnutie
+// s dodávateľom") — obhliadky/realizácie already carry their own schedule
+// fields on Inspection/QuoteAlternative and don't need a row here.
+model CalendarEvent {
+  id             String    @id @default(cuid())
+  title          String
+  date           DateTime
+  startTime      String?   @map("start_time")
+  endTime        String?   @map("end_time")
+  location       String?
+  notes          String?
+  reminderSentAt DateTime? @map("reminder_sent_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("calendar_events")
+}
