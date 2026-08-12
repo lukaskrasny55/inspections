@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 // The app is built for tablets used in the field, not phones — dense tables
 // (Ponuka line items, checklist rows) and photo/sketch capture need more
@@ -43,18 +43,7 @@ export default function TabletGuard({ children }: { children: ReactNode }) {
 
   if (ok || exempt) return <>{children}</>
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6">
-      <div className="max-w-sm text-center space-y-3">
-        <svg viewBox="0 0 100 100" className="w-10 h-10 mx-auto" aria-hidden="true">
-          <path d="M50 6 L90 28 L90 72 L50 94 L10 72 L10 28 Z" fill="none" stroke="#17191d" strokeWidth="7" />
-        </svg>
-        <h1 className="text-lg font-semibold text-slate-900">TMS Hydra – Obhliadky je appka pre tablety</h1>
-        <p className="text-sm text-slate-500">
-          Táto aplikácia je navrhnutá pre tablet (fotky, výkres, checklist a ponuka potrebujú viac miesta). Otvor ju,
-          prosím, na tablete.
-        </p>
-      </div>
-    </div>
-  )
+  // Phone-sized and not already on a phone-friendly page: don't show a dead
+  // end, just take them to the one screen that works on a phone (Plán).
+  return <Navigate to="/plan" replace />
 }
