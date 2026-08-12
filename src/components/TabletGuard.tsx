@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 
 // The app is built for tablets used in the field, not phones — dense tables
 // (Ponuka line items, checklist rows) and photo/sketch capture need more
@@ -10,6 +11,13 @@ import { useEffect, useState, type ReactNode } from 'react'
 // orientation" (min ~600px on the smallest 7" devices).
 const MIN_TABLET_DIMENSION = 600
 
+// The Plán page is a simple day/week list plus a small "add event" form —
+// it doesn't need tablet-sized room the way photo/sketch/quote editing does,
+// and it's the one screen owners check from a phone (today's schedule,
+// adding a quick appointment). So it's exempt from the tablet-only gate;
+// everything else (inspections, quotes, sketches, settings) stays tablet-only.
+const PHONE_FRIENDLY_PREFIXES = ['/plan']
+
 function isTabletSized() {
   if (typeof window === 'undefined') return true
   return Math.min(window.innerWidth, window.innerHeight) >= MIN_TABLET_DIMENSION
@@ -17,6 +25,7 @@ function isTabletSized() {
 
 export default function TabletGuard({ children }: { children: ReactNode }) {
   const [ok, setOk] = useState(isTabletSized)
+  const { pathname } = useLocation()
 
   useEffect(() => {
     function check() {
@@ -30,7 +39,9 @@ export default function TabletGuard({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  if (ok) return <>{children}</>
+  const exempt = PHONE_FRIENDLY_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+
+  if (ok || exempt) return <>{children}</>
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6">
