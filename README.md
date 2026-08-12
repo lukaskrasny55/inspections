@@ -17,7 +17,7 @@ Vytiahnuté z posledného commitu vetvy `feature/obhliadky-app` repozitára
 - **Appka nie je nasadená.** Treba založiť nový Vercel projekt a napojiť ho na
   tento repozitár.
 - `APP_PASSWORD` a `CRON_SECRET` treba nastaviť ako nové env premenné (staré
-  heslo z produkčnej appky TMS-HYDRA sa sem nekopírovalo)..
+  heslo z produkčnej appky TMS-HYDRA sa sem nekopírovalo).
 
 ## Setup
 
