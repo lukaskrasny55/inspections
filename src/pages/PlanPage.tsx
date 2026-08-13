@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { createCalendarEvent, deleteCalendarEvent, fetchPlan } from '../lib/api'
+import {
+  createCalendarEvent,
+  deleteCalendarEvent,
+  fetchPlan,
+  updateCalendarEvent,
+  updateInspection,
+  updateQuoteAlternative,
+} from '../lib/api'
 import type { PlanEvent } from '../types'
 
 type Mode = 'week' | 'month'
@@ -75,6 +82,19 @@ function rawId(ev: PlanEvent): string {
 
 const EMPTY_FORM = { title: '', date: '', startTime: '', endTime: '', location: '', notes: '' }
 
+type EditForm = typeof EMPTY_FORM
+
+function planEventToEditForm(ev: PlanEvent): EditForm {
+  return {
+    title: ev.title ?? '',
+    date: toISODate(new Date(ev.date)),
+    startTime: ev.time ?? '',
+    endTime: ev.endTime ?? '',
+    location: ev.location ?? '',
+    notes: ev.notes ?? '',
+  }
+}
+
 export default function PlanPage() {
   const navigate = useNavigate()
   const [mode, setMode] = useState<Mode>('week')
@@ -87,6 +107,11 @@ export default function PlanPage() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  const [editingEvent, setEditingEvent] = useState<PlanEvent | null>(null)
+  const [editForm, setEditForm] = useState<EditForm>(EMPTY_FORM)
+  const [editError, setEditError] = useState<string | null>(null)
+  const [savingEdit, setSavingEdit] = useState(false)
 
   const { from, to } = useMemo(() => rangeForMode(mode, anchor), [mode, anchor])
 
@@ -181,9 +206,89 @@ export default function PlanPage() {
     }
   }
 
+  // "Delete" means different things per event kind: a custom event is truly
+  // removed, but an obhliadka/realizácia already carries other data (roof
+  // measurements, quote line items, photos...) that must survive — deleting
+  // it from Plán just clears its schedule so it drops off the calendar
+  // without touching that data. It can always be rescheduled again from the
+  // zákazka itself.
   async function handleDeleteEvent(ev: PlanEvent) {
-    await deleteCalendarEvent(rawId(ev))
+    const isUnschedule = ev.type !== 'ine'
+    const confirmed = window.confirm(
+      isUnschedule
+        ? 'Odstrániť túto udalosť z plánu? Samotná zákazka zostane zachovaná, len sa jej zruší naplánovaný termín.'
+        : 'Zmazať túto udalosť?',
+    )
+    if (!confirmed) return
+
+    if (ev.type === 'ine') {
+      await deleteCalendarEvent(rawId(ev))
+    } else if (ev.type === 'obhliadka') {
+      await updateInspection(rawId(ev), { inspectionDate: null, inspectionTime: null })
+    } else {
+      await updateQuoteAlternative(rawId(ev), {
+        realizationStartDate: null,
+        realizationEndDate: null,
+        realizationStartTime: null,
+        realizationEndTime: null,
+      })
+    }
     loadEvents()
+  }
+
+  function startEdit(ev: PlanEvent) {
+    setEditingEvent(ev)
+    setEditForm(planEventToEditForm(ev))
+    setEditError(null)
+  }
+
+  function cancelEdit() {
+    setEditingEvent(null)
+    setEditError(null)
+  }
+
+  async function handleSaveEdit() {
+    if (!editingEvent) return
+    if (editingEvent.type === 'ine' && !editForm.title.trim()) {
+      setEditError('Názov udalosti je povinný.')
+      return
+    }
+    if (!editForm.date) {
+      setEditError('Dátum je povinný.')
+      return
+    }
+    setEditError(null)
+    setSavingEdit(true)
+    try {
+      if (editingEvent.type === 'ine') {
+        await updateCalendarEvent(rawId(editingEvent), {
+          title: editForm.title.trim(),
+          date: editForm.date,
+          startTime: editForm.startTime || null,
+          endTime: editForm.endTime || null,
+          location: editForm.location.trim() || null,
+          notes: editForm.notes.trim() || null,
+        })
+      } else if (editingEvent.type === 'obhliadka') {
+        await updateInspection(rawId(editingEvent), {
+          inspectionDate: editForm.date,
+          inspectionTime: editForm.startTime || null,
+        })
+      } else {
+        await updateQuoteAlternative(rawId(editingEvent), {
+          realizationStartDate: editForm.date,
+          realizationEndDate: editForm.date,
+          realizationStartTime: editForm.startTime || null,
+          realizationEndTime: editForm.endTime || null,
+        })
+      }
+      setEditingEvent(null)
+      loadEvents()
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : 'Nepodarilo sa uložiť zmenu.')
+    } finally {
+      setSavingEdit(false)
+    }
   }
 
   const todayKey = toISODate(new Date())
@@ -391,53 +496,143 @@ export default function PlanPage() {
                         const timeLabel = ev.time ? `${ev.time}${ev.endTime ? `–${ev.endTime}` : ''}` : null
                         const title = ev.customerName || ev.title || ''
                         const isCustom = ev.type === 'ine'
+                        const isEditing = editingEvent?.id === ev.id
                         return (
-                          <div
-                            key={`${key}-${ev.id}`}
-                            onClick={() => !isCustom && navigate(`/inspections/${ev.inspectionId}`)}
-                            className={`w-full text-left px-4 py-2.5 flex items-center justify-between gap-3 ${
-                              isCustom ? '' : 'cursor-pointer hover:bg-slate-50 transition'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
-                              <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGE[ev.type]}`}>
-                                {TYPE_LABEL[ev.type]}
-                                {ev.type === 'realizacia' && ev.label ? ` ${ev.label}` : ''}
-                              </span>
-                              <span className="truncate text-sm font-medium text-slate-900">{title}</span>
-                              {timeLabel && <span className="shrink-0 text-xs text-slate-500">{timeLabel}</span>}
-                              {ev.location && <span className="shrink-0 text-xs text-slate-400">{ev.location}</span>}
-                              {ev.referenceNumber && <span className="shrink-0 text-xs text-slate-400">{ev.referenceNumber}</span>}
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              {ev.technicianName && (
-                                <span
-                                  className={`text-xs flex items-center gap-1 ${
-                                    (technicianCounts.get(ev.technicianName) ?? 0) > 1 ? 'text-amber-700 font-medium' : 'text-slate-500'
-                                  }`}
-                                  title={
-                                    (technicianCounts.get(ev.technicianName) ?? 0) > 1
-                                      ? `${ev.technicianName} má tento deň viac naplánovaných udalostí`
-                                      : undefined
-                                  }
-                                >
-                                  {(technicianCounts.get(ev.technicianName) ?? 0) > 1 && '⚠ '}
-                                  {ev.technicianName}
+                          <div key={`${key}-${ev.id}`}>
+                            <div
+                              onClick={() => !isCustom && !isEditing && navigate(`/inspections/${ev.inspectionId}`)}
+                              className={`w-full text-left px-4 py-2.5 flex items-center justify-between gap-3 ${
+                                isCustom ? '' : 'cursor-pointer hover:bg-slate-50 transition'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
+                                <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGE[ev.type]}`}>
+                                  {TYPE_LABEL[ev.type]}
+                                  {ev.type === 'realizacia' && ev.label ? ` ${ev.label}` : ''}
                                 </span>
-                              )}
-                              {isCustom && (
+                                <span className="truncate text-sm font-medium text-slate-900">{title}</span>
+                                {timeLabel && <span className="shrink-0 text-xs text-slate-500">{timeLabel}</span>}
+                                {ev.location && <span className="shrink-0 text-xs text-slate-400">{ev.location}</span>}
+                                {ev.referenceNumber && <span className="shrink-0 text-xs text-slate-400">{ev.referenceNumber}</span>}
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                {ev.technicianName && (
+                                  <span
+                                    className={`text-xs flex items-center gap-1 ${
+                                      (technicianCounts.get(ev.technicianName) ?? 0) > 1 ? 'text-amber-700 font-medium' : 'text-slate-500'
+                                    }`}
+                                    title={
+                                      (technicianCounts.get(ev.technicianName) ?? 0) > 1
+                                        ? `${ev.technicianName} má tento deň viac naplánovaných udalostí`
+                                        : undefined
+                                    }
+                                  >
+                                    {(technicianCounts.get(ev.technicianName) ?? 0) > 1 && '⚠ '}
+                                    {ev.technicianName}
+                                  </span>
+                                )}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    isEditing ? cancelEdit() : startEdit(ev)
+                                  }}
+                                  className="text-xs text-slate-400 hover:text-brand-600"
+                                  title={isEditing ? 'Zavrieť úpravu' : 'Upraviť termín'}
+                                >
+                                  {isEditing ? '✕' : '✎'}
+                                </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     handleDeleteEvent(ev)
                                   }}
                                   className="text-xs text-slate-400 hover:text-red-600"
-                                  title="Zmazať udalosť"
+                                  title={isCustom ? 'Zmazať udalosť' : 'Odstrániť z plánu'}
                                 >
-                                  ✕
+                                  🗑
                                 </button>
-                              )}
+                              </div>
                             </div>
+
+                            {isEditing && (
+                              <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 space-y-3">
+                                {isCustom && (
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Názov</label>
+                                    <input
+                                      type="text"
+                                      value={editForm.title}
+                                      onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                )}
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Dátum</label>
+                                    <input
+                                      type="date"
+                                      value={editForm.date}
+                                      onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                  {isCustom && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-slate-500 mb-1">Miesto</label>
+                                      <input
+                                        type="text"
+                                        value={editForm.location}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, location: e.target.value }))}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                      />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Čas od</label>
+                                    <input
+                                      type="time"
+                                      value={editForm.startTime}
+                                      onChange={(e) => setEditForm((f) => ({ ...f, startTime: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Čas do</label>
+                                    <input
+                                      type="time"
+                                      value={editForm.endTime}
+                                      onChange={(e) => setEditForm((f) => ({ ...f, endTime: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                </div>
+                                {isCustom && (
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Poznámka</label>
+                                    <textarea
+                                      value={editForm.notes}
+                                      onChange={(e) => setEditForm((f) => ({ ...f, notes: e.target.value }))}
+                                      rows={2}
+                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                )}
+                                {editError && <div className="text-red-600 text-xs">{editError}</div>}
+                                <div className="flex items-center gap-3">
+                                  <button
+                                    onClick={handleSaveEdit}
+                                    disabled={savingEdit}
+                                    className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+                                  >
+                                    {savingEdit ? 'Ukladám…' : 'Uložiť'}
+                                  </button>
+                                  <button onClick={cancelEdit} className="text-sm text-slate-500 hover:text-slate-700">
+                                    Zrušiť
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )
                       })}
