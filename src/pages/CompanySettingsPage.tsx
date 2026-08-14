@@ -27,6 +27,7 @@ export default function CompanySettingsPage() {
     email: '',
     phone: '',
   })
+  const [notifyEmail, setNotifyEmail] = useState('')
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [status, setStatus] = useState<SaveStatus>('idle')
   const [error, setError] = useState<string | null>(null)
@@ -47,6 +48,7 @@ export default function CompanySettingsPage() {
             phone: settings.phone ?? '',
           })
           setLogoUrl(settings.logoUrl)
+          setNotifyEmail(settings.notifyEmail ?? '')
         }
       })
       .catch((err) => setError(err.message))
@@ -71,6 +73,22 @@ export default function CompanySettingsPage() {
   function handleChange(key: FieldKey, value: string) {
     setValues((v) => ({ ...v, [key]: value }))
     scheduleSave({ [key]: value })
+  }
+
+  function handleNotifyEmailChange(value: string) {
+    setNotifyEmail(value)
+    setStatus('saving')
+    setError(null)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        await updateCompanySettings({ notifyEmail: value })
+        setStatus('saved')
+      } catch (err) {
+        setStatus('error')
+        setError((err as Error).message)
+      }
+    }, 800)
   }
 
   async function handleLogoSelected(fileList: FileList | null) {
@@ -120,6 +138,22 @@ export default function CompanySettingsPage() {
               />
             </div>
           ))}
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">
+          <h2 className="text-sm font-semibold text-slate-700">Kópie odoslaných ponúk</h2>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">E-mail na kópie ponúk</label>
+            <input
+              value={notifyEmail}
+              onChange={(e) => handleNotifyEmailChange(e.target.value)}
+              placeholder="napr. info@tmshydra.com"
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+            <p className="text-xs text-slate-500 mt-1">
+              Keď zákazníkovi odošleš ponuku z appky, kópia príde aj sem. Nechaj prázdne, ak kópiu nechceš.
+            </p>
+          </div>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">

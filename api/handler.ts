@@ -39,7 +39,9 @@ import drainDownspouts from '../api-handlers/drain-downspouts/index.js'
 import drainDownspoutsId from '../api-handlers/drain-downspouts/[id].js'
 import generatePlanDocument from '../api-handlers/generate-plan-document.js'
 import generateQuoteDocument from '../api-handlers/generate-quote-document.js'
+import generateQuotePdf from '../api-handlers/generate-quote-pdf.js'
 import generateTechnicalDocument from '../api-handlers/generate-technical-document.js'
+import generateTechnicalPdf from '../api-handlers/generate-technical-pdf.js'
 import gutterSystemItems from '../api-handlers/gutter-system-items/index.js'
 import gutterSystemItemsId from '../api-handlers/gutter-system-items/[id].js'
 import inspectionPhotos from '../api-handlers/inspection-photos/index.js'
@@ -97,7 +99,9 @@ const STATIC_ROUTES: Record<string, Handler> = {
   'drain-downspouts': drainDownspouts,
   'generate-plan-document': generatePlanDocument,
   'generate-quote-document': generateQuoteDocument,
+  'generate-quote-pdf': generateQuotePdf,
   'generate-technical-document': generateTechnicalDocument,
+  'generate-technical-pdf': generateTechnicalPdf,
   'gutter-system-items': gutterSystemItems,
   'inspection-photos': inspectionPhotos,
   'inspection-sketch': inspectionSketch,

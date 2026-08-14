@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import { buildTechnicalDocument } from '../lib/technical-document.js'
+import { convertDocxToPdf } from '../lib/pdf-convert.js'
 
 interface ApiRequest extends IncomingMessage {
   query: Record<string, string | string[] | undefined>
@@ -26,8 +27,16 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return res.status(404).json({ error: 'Cenová alternatíva nebola nájdená.' })
   }
 
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-  res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`)
+  let pdfBuffer: Buffer
+  try {
+    pdfBuffer = await convertDocxToPdf(result.buffer, result.filename)
+  } catch (err) {
+    return res.status(502).json({ error: (err as Error).message })
+  }
+
+  const filename = result.filename.replace(/\.docx$/i, '.pdf')
+  res.setHeader('Content-Type', 'application/pdf')
+  res.setHeader('Content-Disposition', `inline; filename="${filename}"`)
   res.status(200)
-  res.end(result.buffer)
+  res.end(pdfBuffer)
 }

@@ -27,6 +27,7 @@ export interface CompanySettings {
   email: string | null
   phone: string | null
   logoUrl: string | null
+  notifyEmail: string | null
 }
 
 export type PriceCategory = 'material' | 'prace'

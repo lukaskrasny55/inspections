@@ -74,6 +74,9 @@ export default function QuoteTab({ inspection, onChange }: Props) {
   const [generating, setGenerating] = useState(false)
   const [sendingEmail, setSendingEmail] = useState(false)
   const [emailStatus, setEmailStatus] = useState<string | null>(null)
+  // V praxi sa zákazníkovi vždy posielajú oba dokumenty spolu - predvolene zapnuté,
+  // dá sa vypnúť pre výnimky.
+  const [includeTechnical, setIncludeTechnical] = useState(true)
   const [compositions, setCompositions] = useState<MaterialComposition[]>([])
   const [priceList, setPriceList] = useState<PriceListItem[]>([])
 
@@ -303,7 +306,7 @@ export default function QuoteTab({ inspection, onChange }: Props) {
       const res = await fetch('/api/send-quote-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: active.id }),
+        body: JSON.stringify({ id: active.id, includeTechnical }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Odoslanie zlyhalo.')
@@ -439,17 +442,45 @@ export default function QuoteTab({ inspection, onChange }: Props) {
                 {generating ? 'Generujem…' : '↻ Generovať z checklistu'}
               </button>
               <a
-                href={`/api/generate-quote-document?id=${active.id}`}
+                href={`/api/generate-quote-pdf?id=${active.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-md"
               >
-                ⬇ Cenová ponuka (DOCX)
+                👁 Náhľad: Cenová ponuka
               </a>
               <a
-                href={`/api/generate-technical-document?id=${active.id}`}
+                href={`/api/generate-technical-pdf?id=${active.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-xs font-medium text-white bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-md"
               >
-                ⬇ Návrh riešenia (DOCX)
+                👁 Náhľad: Návrh riešenia
               </a>
+              <button onClick={() => handleDeleteAlternative(active.id)} className="text-xs font-medium text-red-500 hover:text-red-700">
+                Vymazať alternatívu
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center justify-between -mt-2">
+            <div className="flex items-center gap-4 text-xs text-slate-500">
+              <a href={`/api/generate-quote-document?id=${active.id}`} className="hover:text-slate-700 underline decoration-dotted">
+                Stiahnuť Word (ponuka)
+              </a>
+              <a href={`/api/generate-technical-document?id=${active.id}`} className="hover:text-slate-700 underline decoration-dotted">
+                Stiahnuť Word (riešenie)
+              </a>
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-1.5 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={includeTechnical}
+                  onChange={(e) => setIncludeTechnical(e.target.checked)}
+                  className="rounded border-slate-300"
+                />
+                Poslať aj návrh riešenia
+              </label>
               <button
                 onClick={handleSendQuoteEmail}
                 disabled={sendingEmail || !inspection.customer.email}
@@ -457,9 +488,6 @@ export default function QuoteTab({ inspection, onChange }: Props) {
                 className="text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-md disabled:opacity-50"
               >
                 {sendingEmail ? 'Odosielam…' : '✉ Odoslať zákazníkovi'}
-              </button>
-              <button onClick={() => handleDeleteAlternative(active.id)} className="text-xs font-medium text-red-500 hover:text-red-700">
-                Vymazať alternatívu
               </button>
             </div>
           </div>

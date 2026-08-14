@@ -281,15 +281,16 @@ model PriceListItem {
 
 // Single row of company info — single-tenant, no multi-tenant scoping.
 model CompanySettings {
-  id       String  @id @default(cuid())
-  ico      String?
-  dic      String?
-  iban     String?
-  bic      String?
-  address  String?
-  email    String?
-  phone    String?
-  logoUrl  String? @map("logo_url")
+  id          String  @id @default(cuid())
+  ico         String?
+  dic         String?
+  iban        String?
+  bic         String?
+  address     String?
+  email       String?
+  phone       String?
+  logoUrl     String? @map("logo_url")
+  notifyEmail String? @map("notify_email")
 
   @@map("company_settings")
 }
