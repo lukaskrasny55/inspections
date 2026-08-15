@@ -49,18 +49,18 @@ export default function AdditionalServicesList({ items, onCreate, onUpdate, onDe
 
   return (
     <div className="space-y-3">
-      {error && <div className="text-red-600 text-xs">{error}</div>}
+      {error && <div className="text-red-600 dark:text-red-400 text-xs">{error}</div>}
 
       {items.map((item) => (
         <ServiceCard key={item.id} item={item} onUpdate={onUpdate} onDelete={onDelete} />
       ))}
 
-      <div className="border border-dashed border-slate-300 rounded-lg p-3 space-y-2">
+      <div className="border border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-3 space-y-2">
         <input
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
           placeholder="napr. Výmena zhnitého laťovania pri komíne"
-          className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
         <div className="flex items-center gap-3">
           <label className="text-xs font-medium text-brand-600 hover:text-brand-700 cursor-pointer">
@@ -77,7 +77,7 @@ export default function AdditionalServicesList({ items, onCreate, onUpdate, onDe
           <button
             onClick={handleAdd}
             disabled={creating || !newDescription.trim()}
-            className="text-xs font-medium text-white bg-slate-900 px-3 py-1.5 rounded-md disabled:opacity-50"
+            className="text-xs font-medium text-white dark:text-slate-900 bg-slate-900 dark:bg-slate-100 px-3 py-1.5 rounded-md disabled:opacity-50"
           >
             {creating ? '…' : '+ Pridať'}
           </button>
@@ -118,7 +118,7 @@ function ServiceCard({
   }
 
   return (
-    <div className="flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
+    <div className="flex items-start gap-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
       {item.photoUrl && (
         <img src={item.photoUrl} alt="" className="w-16 h-16 object-cover rounded-md shrink-0" />
       )}
@@ -127,9 +127,9 @@ function ServiceCard({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onBlur={() => description !== item.description && onUpdate(item.id, { description })}
-          className="w-full px-2 py-1 border border-transparent hover:border-slate-200 focus:border-brand-400 rounded text-sm focus:outline-none bg-white"
+          className="w-full px-2 py-1 border border-transparent hover:border-slate-200 focus:border-brand-400 rounded text-sm focus:outline-none bg-white dark:bg-slate-800"
         />
-        {error && <div className="text-red-600 text-xs">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-xs">{error}</div>}
         <div className="flex items-center gap-3">
           <label className="text-xs font-medium text-brand-600 hover:text-brand-700 cursor-pointer">
             {uploading ? 'Nahrávam…' : item.photoUrl ? 'Zmeniť fotku' : '+ Pridať fotku'}

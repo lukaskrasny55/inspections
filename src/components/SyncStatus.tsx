@@ -29,14 +29,14 @@ export default function SyncStatus() {
     <div className="flex items-center gap-1.5 text-xs">
       <span
         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${
-          online ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'
+          online ? 'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300' : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
         }`}
       >
         <span className={`w-1.5 h-1.5 rounded-full ${online ? 'bg-green-500' : 'bg-amber-500'}`} />
         {online ? 'Online' : 'Offline'}
       </span>
       {pending > 0 && (
-        <span className="px-2.5 py-1 rounded-full bg-brand-100 text-brand-700 font-medium">
+        <span className="px-2.5 py-1 rounded-full bg-brand-100 dark:bg-slate-700 text-brand-700 dark:text-slate-200 font-medium">
           {pending} čaká na synchronizáciu
         </span>
       )}

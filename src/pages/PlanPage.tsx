@@ -25,9 +25,9 @@ const TYPE_LABEL: Record<PlanEvent['type'], string> = {
 }
 
 const TYPE_BADGE: Record<PlanEvent['type'], string> = {
-  obhliadka: 'bg-slate-100 text-slate-700',
-  realizacia: 'bg-brand-100 text-brand-700',
-  ine: 'bg-amber-100 text-amber-700',
+  obhliadka: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
+  realizacia: 'bg-brand-100 dark:bg-slate-700 text-brand-700 dark:text-slate-200',
+  ine: 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300',
 }
 
 function toISODate(d: Date): string {
@@ -295,14 +295,14 @@ export default function PlanPage() {
   const pdfUrl = `/api/generate-plan-document?from=${toISODate(from)}&to=${toISODate(to)}`
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+          <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
             ← Zoznam zákaziek
           </Link>
         </div>
-        <h1 className="text-xl font-semibold text-slate-900">Plán</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Plán</h1>
         <a
           href={pdfUrl}
           className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"
@@ -317,7 +317,7 @@ export default function PlanPage() {
             <button
               onClick={() => setMode('week')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                mode === 'week' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                mode === 'week' ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
             >
               Týždeň
@@ -325,7 +325,7 @@ export default function PlanPage() {
             <button
               onClick={() => setMode('month')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                mode === 'month' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                mode === 'month' ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
             >
               Mesiac
@@ -334,16 +334,16 @@ export default function PlanPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => step(-1)}
-              className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+              className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
             >
               ‹
             </button>
-            <span className="text-sm font-medium text-slate-700 min-w-[11ch] text-center">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300 min-w-[11ch] text-center">
               {formatRangeLabel(mode, from, to)}
             </span>
             <button
               onClick={() => step(1)}
-              className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+              className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
             >
               ›
             </button>
@@ -357,21 +357,21 @@ export default function PlanPage() {
         </div>
 
         <div className="flex gap-3 text-sm">
-          <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
-            <div className="text-2xl font-semibold text-slate-900">{summary.obhliadky}</div>
-            <div className="text-slate-500">obhliadok v tomto období</div>
+          <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+            <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.obhliadky}</div>
+            <div className="text-slate-500 dark:text-slate-400">obhliadok v tomto období</div>
           </div>
-          <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
-            <div className="text-2xl font-semibold text-slate-900">{summary.realizacie}</div>
-            <div className="text-slate-500">realizácií v tomto období</div>
+          <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+            <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.realizacie}</div>
+            <div className="text-slate-500 dark:text-slate-400">realizácií v tomto období</div>
           </div>
-          <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
-            <div className="text-2xl font-semibold text-slate-900">{summary.ine}</div>
-            <div className="text-slate-500">iných udalostí</div>
+          <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+            <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.ine}</div>
+            <div className="text-slate-500 dark:text-slate-400">iných udalostí</div>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-4">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
           {!showForm ? (
             <button
               onClick={() => setShowForm(true)}
@@ -382,7 +382,7 @@ export default function PlanPage() {
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-700">Nová udalosť</h3>
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Nová udalosť</h3>
                 <button
                   onClick={() => {
                     setShowForm(false)
@@ -396,66 +396,66 @@ export default function PlanPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Názov</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Názov</label>
                   <input
                     type="text"
                     value={form.title}
                     onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                     placeholder="napr. Nákup materiálu"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Dátum</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Dátum</label>
                   <input
                     type="date"
                     value={form.date}
                     onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Miesto</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Miesto</label>
                   <input
                     type="text"
                     value={form.location}
                     onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Čas od</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas od</label>
                   <input
                     type="time"
                     value={form.startTime}
                     onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Čas do</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas do</label>
                   <input
                     type="time"
                     value={form.endTime}
                     onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Poznámka</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Poznámka</label>
                   <textarea
                     value={form.notes}
                     onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                     rows={2}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
               </div>
-              {formError && <div className="text-red-600 text-xs">{formError}</div>}
+              {formError && <div className="text-red-600 dark:text-red-400 text-xs">{formError}</div>}
               <button
                 onClick={handleCreateEvent}
                 disabled={submitting}
-                className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+                className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 disabled:opacity-50"
               >
                 {submitting ? 'Ukladám…' : 'Uložiť udalosť'}
               </button>
@@ -463,10 +463,10 @@ export default function PlanPage() {
           )}
         </div>
 
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
         {loading ? (
-          <div className="text-slate-500 text-sm py-8 text-center">Načítavam…</div>
+          <div className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">Načítavam…</div>
         ) : (
           <div className="space-y-2">
             {days.map((day) => {
@@ -480,9 +480,9 @@ export default function PlanPage() {
               return (
                 <div
                   key={key}
-                  className={`bg-white border rounded-lg overflow-hidden ${isToday ? 'border-brand-400 ring-1 ring-brand-100' : 'border-slate-200'}`}
+                  className={`bg-white dark:bg-slate-800 border rounded-lg overflow-hidden ${isToday ? 'border-brand-400 ring-1 ring-brand-100' : 'border-slate-200 dark:border-slate-700'}`}
                 >
-                  <div className={`px-4 py-2 text-xs font-medium flex items-center justify-between ${isToday ? 'bg-brand-50 text-brand-700' : 'bg-slate-50 text-slate-500'}`}>
+                  <div className={`px-4 py-2 text-xs font-medium flex items-center justify-between ${isToday ? 'bg-brand-50 text-brand-700' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400'}`}>
                     <span>
                       {DAY_NAMES[day.getDay()]} {day.getDate()}. {day.getMonth() + 1}.
                     </span>
@@ -491,7 +491,7 @@ export default function PlanPage() {
                   {dayEvents.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-slate-400">—</div>
                   ) : (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
                       {dayEvents.map((ev) => {
                         const timeLabel = ev.time ? `${ev.time}${ev.endTime ? `–${ev.endTime}` : ''}` : null
                         const title = ev.customerName || ev.title || ''
@@ -502,7 +502,7 @@ export default function PlanPage() {
                             <div
                               onClick={() => !isCustom && !isEditing && navigate(`/inspections/${ev.inspectionId}`)}
                               className={`w-full text-left px-4 py-2.5 flex items-center justify-between gap-3 ${
-                                isCustom ? '' : 'cursor-pointer hover:bg-slate-50 transition'
+                                isCustom ? '' : 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition'
                               }`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
@@ -510,8 +510,8 @@ export default function PlanPage() {
                                   {TYPE_LABEL[ev.type]}
                                   {ev.type === 'realizacia' && ev.label ? ` ${ev.label}` : ''}
                                 </span>
-                                <span className="truncate text-sm font-medium text-slate-900">{title}</span>
-                                {timeLabel && <span className="shrink-0 text-xs text-slate-500">{timeLabel}</span>}
+                                <span className="truncate text-sm font-medium text-slate-900 dark:text-slate-50">{title}</span>
+                                {timeLabel && <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeLabel}</span>}
                                 {ev.location && <span className="shrink-0 text-xs text-slate-400">{ev.location}</span>}
                                 {ev.referenceNumber && <span className="shrink-0 text-xs text-slate-400">{ev.referenceNumber}</span>}
                               </div>
@@ -519,7 +519,7 @@ export default function PlanPage() {
                                 {ev.technicianName && (
                                   <span
                                     className={`text-xs flex items-center gap-1 ${
-                                      (technicianCounts.get(ev.technicianName) ?? 0) > 1 ? 'text-amber-700 font-medium' : 'text-slate-500'
+                                      (technicianCounts.get(ev.technicianName) ?? 0) > 1 ? 'text-amber-700 dark:text-amber-300 font-medium' : 'text-slate-500 dark:text-slate-400'
                                     }`}
                                     title={
                                       (technicianCounts.get(ev.technicianName) ?? 0) > 1
@@ -555,79 +555,79 @@ export default function PlanPage() {
                             </div>
 
                             {isEditing && (
-                              <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 space-y-3">
+                              <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 space-y-3">
                                 {isCustom && (
                                   <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">Názov</label>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Názov</label>
                                     <input
                                       type="text"
                                       value={editForm.title}
                                       onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                                     />
                                   </div>
                                 )}
                                 <div className="grid grid-cols-2 gap-3">
                                   <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">Dátum</label>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Dátum</label>
                                     <input
                                       type="date"
                                       value={editForm.date}
                                       onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                                     />
                                   </div>
                                   {isCustom && (
                                     <div>
-                                      <label className="block text-xs font-medium text-slate-500 mb-1">Miesto</label>
+                                      <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Miesto</label>
                                       <input
                                         type="text"
                                         value={editForm.location}
                                         onChange={(e) => setEditForm((f) => ({ ...f, location: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                                       />
                                     </div>
                                   )}
                                   <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">Čas od</label>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas od</label>
                                     <input
                                       type="time"
                                       value={editForm.startTime}
                                       onChange={(e) => setEditForm((f) => ({ ...f, startTime: e.target.value }))}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                                     />
                                   </div>
                                   <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">Čas do</label>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas do</label>
                                     <input
                                       type="time"
                                       value={editForm.endTime}
                                       onChange={(e) => setEditForm((f) => ({ ...f, endTime: e.target.value }))}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                                     />
                                   </div>
                                 </div>
                                 {isCustom && (
                                   <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">Poznámka</label>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Poznámka</label>
                                     <textarea
                                       value={editForm.notes}
                                       onChange={(e) => setEditForm((f) => ({ ...f, notes: e.target.value }))}
                                       rows={2}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                                     />
                                   </div>
                                 )}
-                                {editError && <div className="text-red-600 text-xs">{editError}</div>}
+                                {editError && <div className="text-red-600 dark:text-red-400 text-xs">{editError}</div>}
                                 <div className="flex items-center gap-3">
                                   <button
                                     onClick={handleSaveEdit}
                                     disabled={savingEdit}
-                                    className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+                                    className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 disabled:opacity-50"
                                   >
                                     {savingEdit ? 'Ukladám…' : 'Uložiť'}
                                   </button>
-                                  <button onClick={cancelEdit} className="text-sm text-slate-500 hover:text-slate-700">
+                                  <button onClick={cancelEdit} className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
                                     Zrušiť
                                   </button>
                                 </div>

@@ -17,26 +17,26 @@ export default function NavodPage() {
   }, [query])
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4">
+        <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
           ← Zoznam zákaziek
         </Link>
-        <h1 className="text-xl font-semibold text-slate-900 mt-1">Návod</h1>
-        <p className="text-sm text-slate-500 mt-1">Vysvetlenie všetkých záložiek, políčok a funkcií appky.</p>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mt-1">Návod</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Vysvetlenie všetkých záložiek, políčok a funkcií appky.</p>
 
         <input
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Hľadať (napr. „stratné“, „technik“, „email“…)"
-          className="mt-4 w-full max-w-xl px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          className="mt-4 w-full max-w-xl px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
       </header>
 
       <main className="max-w-3xl mx-auto p-6 space-y-4">
         {!query.trim() && (
-          <nav className="bg-white border border-slate-200 rounded-lg p-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <nav className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
             {HELP_SECTIONS.map((s) => (
               <a key={s.id} href={`#${s.id}`} className="text-brand-600 hover:text-brand-700 hover:underline">
                 {s.title}
@@ -46,19 +46,19 @@ export default function NavodPage() {
         )}
 
         {filteredSections.length === 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg p-12 text-slate-500 text-sm text-center">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-12 text-slate-500 dark:text-slate-400 text-sm text-center">
             Nič sa nenašlo pre „{query}“.
           </div>
         )}
 
         {filteredSections.map((section) => (
-          <section key={section.id} id={section.id} className="bg-white border border-slate-200 rounded-lg p-6 space-y-4 scroll-mt-4">
-            <h2 className="text-base font-semibold text-slate-900">{section.title}</h2>
+          <section key={section.id} id={section.id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-4 scroll-mt-4">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">{section.title}</h2>
             <div className="space-y-3">
               {section.items.map((item) => (
                 <div key={item.title}>
-                  <div className="text-sm font-medium text-slate-700">{item.title}</div>
-                  <p className="text-sm text-slate-600 mt-0.5 leading-relaxed">{item.content}</p>
+                  <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{item.title}</div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">{item.content}</p>
                 </div>
               ))}
             </div>

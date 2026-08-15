@@ -101,16 +101,16 @@ export default function PhotoAnnotator({ photoUrl, onSave, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-4 max-w-3xl w-full space-y-3">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 max-w-3xl w-full space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-700">Označiť na fotke</h3>
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Označiť na fotke</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-lg leading-none">
             ×
           </button>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">Farba:</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Farba:</span>
           {COLORS.map((c) => (
             <button
               key={c}
@@ -120,7 +120,7 @@ export default function PhotoAnnotator({ photoUrl, onSave, onClose }: Props) {
               aria-label={c}
             />
           ))}
-          <button onClick={handleClear} className="ml-auto text-xs font-medium text-slate-500 hover:text-slate-700">
+          <button onClick={handleClear} className="ml-auto text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
             Vymazať kresbu
           </button>
         </div>
@@ -141,16 +141,16 @@ export default function PhotoAnnotator({ photoUrl, onSave, onClose }: Props) {
           </div>
         )}
 
-        {error && <div className="text-red-600 text-xs">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-xs">{error}</div>}
 
         <div className="flex items-center justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100">
+          <button onClick={onClose} className="px-4 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
             Zrušiť
           </button>
           <button
             onClick={handleSave}
             disabled={saving || size.width === 0}
-            className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+            className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 disabled:opacity-50"
           >
             {saving ? 'Ukladám…' : 'Uložiť'}
           </button>

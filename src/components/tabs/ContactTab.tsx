@@ -63,20 +63,20 @@ export default function ContactTab({ customer, onSaved }: Props) {
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-6 max-w-xl space-y-4">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 max-w-xl space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-700">Kontaktné údaje</h2>
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Kontaktné údaje</h2>
         <SaveIndicator status={status} error={error} />
       </div>
 
       {FIELDS.map((field) => (
         <div key={field.key}>
-          <label className="block text-sm font-medium text-slate-700 mb-1">{field.label}</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{field.label}</label>
           <input
             type={field.type ?? 'text'}
             value={values[field.key]}
             onChange={(e) => handleChange(field.key, e.target.value)}
-            className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
       ))}
@@ -86,7 +86,7 @@ export default function ContactTab({ customer, onSaved }: Props) {
 
 function SaveIndicator({ status, error }: { status: SaveStatus; error: string | null }) {
   if (status === 'saving') return <span className="text-xs text-slate-400">Ukladám…</span>
-  if (status === 'saved') return <span className="text-xs text-green-600">Uložené</span>
-  if (status === 'error') return <span className="text-xs text-red-600">{error || 'Chyba pri ukladaní'}</span>
+  if (status === 'saved') return <span className="text-xs text-green-600 dark:text-green-400">Uložené</span>
+  if (status === 'error') return <span className="text-xs text-red-600 dark:text-red-400">{error || 'Chyba pri ukladaní'}</span>
   return null
 }

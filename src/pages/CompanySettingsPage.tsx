@@ -108,56 +108,56 @@ export default function CompanySettingsPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-500">Načítavam…</div>
+    return <div className="min-h-screen flex items-center justify-center text-slate-500 dark:text-slate-400">Načítavam…</div>
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4">
+        <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
           ← Zoznam zákaziek
         </Link>
-        <h1 className="text-xl font-semibold text-slate-900 mt-1">Firemné údaje</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mt-1">Firemné údaje</h1>
       </header>
 
       <main className="max-w-xl mx-auto p-6 space-y-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-4">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-slate-700">Fakturačné údaje</h2>
-            {error && <span className="text-xs text-red-600">{error}</span>}
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Fakturačné údaje</h2>
+            {error && <span className="text-xs text-red-600 dark:text-red-400">{error}</span>}
             {!error && <SaveIndicator status={status} />}
           </div>
 
           {FIELDS.map((field) => (
             <div key={field.key}>
-              <label className="block text-sm font-medium text-slate-700 mb-1">{field.label}</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{field.label}</label>
               <input
                 value={values[field.key]}
                 onChange={(e) => handleChange(field.key, e.target.value)}
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
           ))}
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">
-          <h2 className="text-sm font-semibold text-slate-700">Kópie odoslaných ponúk</h2>
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-3">
+          <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Kópie odoslaných ponúk</h2>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">E-mail na kópie ponúk</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">E-mail na kópie ponúk</label>
             <input
               value={notifyEmail}
               onChange={(e) => handleNotifyEmailChange(e.target.value)}
               placeholder="napr. info@tmshydra.com"
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Keď zákazníkovi odošleš ponuku z appky, kópia príde aj sem. Nechaj prázdne, ak kópiu nechceš.
             </p>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">
-          <h2 className="text-sm font-semibold text-slate-700">Logo</h2>
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-3">
+          <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Logo</h2>
           {logoUrl && <img src={logoUrl} alt="Logo" className="h-20 object-contain" />}
           <label className="inline-block px-4 py-2.5 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition cursor-pointer">
             {uploadingLogo ? 'Nahrávam…' : logoUrl ? 'Nahradiť logo' : 'Nahrať logo'}
@@ -177,6 +177,6 @@ export default function CompanySettingsPage() {
 
 function SaveIndicator({ status }: { status: SaveStatus }) {
   if (status === 'saving') return <span className="text-xs text-slate-400">Ukladám…</span>
-  if (status === 'saved') return <span className="text-xs text-green-600">Uložené</span>
+  if (status === 'saved') return <span className="text-xs text-green-600 dark:text-green-400">Uložené</span>
   return null
 }

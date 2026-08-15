@@ -60,50 +60,50 @@ export default function InspectionsListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">TMS Hydra – Obhliadky</h1>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">TMS Hydra – Obhliadky</h1>
         <div className="flex items-center gap-3">
         <SyncStatus />
         <div className="flex items-center gap-1">
-        <Link to="/plan" className="text-sm text-slate-500 hover:text-slate-700 px-3 py-1.5 rounded-md hover:bg-slate-100">
+        <Link to="/plan" className="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
           Plán
         </Link>
-        <Link to="/summary" className="text-sm text-slate-500 hover:text-slate-700 px-3 py-1.5 rounded-md hover:bg-slate-100">
+        <Link to="/summary" className="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
           Súhrn
         </Link>
-        <Link to="/navod" className="text-sm text-slate-500 hover:text-slate-700 px-3 py-1.5 rounded-md hover:bg-slate-100">
+        <Link to="/navod" className="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
           Návod
         </Link>
         <details className="relative">
-          <summary className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer list-none px-3 py-1.5 rounded-md hover:bg-slate-100">
+          <summary className="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white cursor-pointer list-none px-3 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
             Nastavenia ▾
           </summary>
-          <div className="absolute right-0 mt-1 w-56 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-10">
-            <Link to="/settings/katalog" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+          <div className="absolute right-0 mt-1 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-10">
+            <Link to="/settings/katalog" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
               Katalóg
             </Link>
-            <Link to="/settings/technicians" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+            <Link to="/settings/technicians" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
               Technici
             </Link>
-            <Link to="/settings/material-compositions" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+            <Link to="/settings/material-compositions" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
               Materiálové skladby
             </Link>
-            <Link to="/settings/material-products" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+            <Link to="/settings/material-products" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
               Popisy materiálov
             </Link>
-            <Link to="/settings/document-templates" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+            <Link to="/settings/document-templates" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
               Textové šablóny
             </Link>
-            <Link to="/settings/company" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+            <Link to="/settings/company" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
               Firemné údaje
             </Link>
-            <div className="border-t border-slate-100 my-1" />
+            <div className="border-t border-slate-100 dark:border-slate-700 my-1" />
             <button
               onClick={() => {
                 fetch('/api/session-logout', { method: 'POST' }).finally(() => window.location.reload())
               }}
-              className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+              className="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               Odhlásiť sa
             </button>
@@ -122,8 +122,8 @@ export default function InspectionsListPage() {
                 onClick={() => setFilter(f.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   filter === f.value
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
                 }`}
               >
                 {f.label}
@@ -139,21 +139,21 @@ export default function InspectionsListPage() {
         </div>
 
         {showNewForm && (
-          <form onSubmit={handleCreate} className="bg-white border border-slate-200 rounded-lg p-4 flex gap-3 items-end">
+          <form onSubmit={handleCreate} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex gap-3 items-end">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Meno zákazníka</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Meno zákazníka</label>
               <input
                 autoFocus
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="napr. Ján Novák"
-                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
             <button
               type="submit"
               disabled={creating || !newName.trim()}
-              className="px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium disabled:opacity-50"
+              className="px-4 py-2 rounded-md bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium disabled:opacity-50"
             >
               {creating ? 'Vytváram…' : 'Založiť'}
             </button>
@@ -164,33 +164,33 @@ export default function InspectionsListPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Hľadať podľa mena zákazníka…"
-          className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
 
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
         {loading ? (
-          <div className="text-slate-500 text-sm py-8 text-center">Načítavam…</div>
+          <div className="text-slate-600 dark:text-slate-400 text-sm py-8 text-center">Načítavam…</div>
         ) : items.length === 0 ? (
-          <div className="text-slate-500 text-sm py-12 text-center">
+          <div className="text-slate-600 dark:text-slate-400 text-sm py-12 text-center">
             Žiadne zákazky. Založ prvú tlačidlom vyššie.
           </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-100">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg divide-y divide-slate-100 dark:divide-slate-700">
             {items.map((item) => (
               <button
                 key={item.id}
                 onClick={() => navigate(`/inspections/${item.id}`)}
-                className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition"
+                className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700 transition"
               >
                 <div>
-                  <div className="font-medium text-slate-900">{item.customer.name}</div>
-                  <div className="text-sm text-slate-500">
+                  <div className="font-medium text-slate-900 dark:text-slate-50">{item.customer.name}</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
                     {item.referenceNumber}
                     {item.customer.address ? ` · ${item.customer.address}` : ''}
                   </div>
                 </div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
                   {STATUS_LABELS[item.status]}
                 </span>
               </button>

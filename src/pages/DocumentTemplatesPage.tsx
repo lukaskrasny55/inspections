@@ -47,13 +47,13 @@ export default function DocumentTemplatesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
         <div>
-          <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+          <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
             ← Zoznam zákaziek
           </Link>
-          <h1 className="text-xl font-semibold text-slate-900 mt-1">Textové šablóny dokumentov</h1>
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mt-1">Textové šablóny dokumentov</h1>
         </div>
         <button
           onClick={() => setShowNewForm((v) => !v)}
@@ -64,31 +64,31 @@ export default function DocumentTemplatesPage() {
       </header>
 
       <main className="max-w-3xl mx-auto p-6 space-y-4">
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
         {showNewForm && (
-          <form onSubmit={handleCreate} className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
+          <form onSubmit={handleCreate} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Kľúč (napr. company_story, email_intro)</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Kľúč (napr. company_story, email_intro)</label>
               <input
                 autoFocus
                 value={newKey}
                 onChange={(e) => setNewKey(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Názov</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Názov</label>
               <input
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
             <button
               type="submit"
               disabled={creating || !newKey.trim() || !newTitle.trim()}
-              className="px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium disabled:opacity-50"
+              className="px-4 py-2 rounded-md bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium disabled:opacity-50"
             >
               {creating ? '…' : 'Založiť'}
             </button>
@@ -96,9 +96,9 @@ export default function DocumentTemplatesPage() {
         )}
 
         {loading ? (
-          <div className="text-slate-500 text-sm py-8 text-center">Načítavam…</div>
+          <div className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">Načítavam…</div>
         ) : items.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-lg p-12 text-slate-500 text-sm text-center">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-12 text-slate-500 dark:text-slate-400 text-sm text-center">
             Zatiaľ žiadne šablóny. Založ prvú tlačidlom vyššie.
           </div>
         ) : (
@@ -134,20 +134,20 @@ function TemplateCard({
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-3">
       <div className="flex items-center justify-between">
         <div>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onBlur={() => title !== item.title && save({ title })}
-            className="text-sm font-semibold text-slate-700 px-2 py-1 border border-transparent hover:border-slate-200 focus:border-brand-400 rounded focus:outline-none"
+            className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-2 py-1 border border-transparent hover:border-slate-200 focus:border-brand-400 rounded focus:outline-none"
           />
           <div className="text-xs text-slate-400 px-2">{item.key}</div>
         </div>
         <div className="flex items-center gap-3">
           {status === 'saving' && <span className="text-xs text-slate-400">Ukladám…</span>}
-          {status === 'saved' && <span className="text-xs text-green-600">Uložené</span>}
+          {status === 'saved' && <span className="text-xs text-green-600 dark:text-green-400">Uložené</span>}
           <button onClick={() => onDelete(item.id)} className="text-xs font-medium text-red-500 hover:text-red-700">
             Vymazať
           </button>
@@ -158,7 +158,7 @@ function TemplateCard({
         onChange={(e) => setContent(e.target.value)}
         onBlur={() => content !== item.content && save({ content })}
         rows={6}
-        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
       />
     </div>
   )

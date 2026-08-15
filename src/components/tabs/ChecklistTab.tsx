@@ -91,46 +91,46 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <section className="bg-white border border-slate-200 rounded-lg p-6 space-y-4">
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-700">Základné údaje</h2>
+          <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Základné údaje</h2>
           <SaveIndicator status={basicStatus} />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Dátum obhliadky</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Dátum obhliadky</label>
             <input
               type="date"
               value={inspectionDate}
               onChange={(e) => handleInspectionDateChange(e.target.value)}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Čas obhliadky</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Čas obhliadky</label>
             <input
               type="time"
               value={inspectionTime}
               onChange={(e) => handleInspectionTimeChange(e.target.value)}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Výmera strechy (m²)</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Výmera strechy (m²)</label>
             <input
               type="number"
               value={areaM2 ?? ''}
               onChange={(e) => handleAreaChange(e.target.value)}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Je strecha zateplená?</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Je strecha zateplená?</label>
             <select
               value={isInsulated === null ? '' : isInsulated ? 'yes' : 'no'}
               onChange={(e) => handleInsulatedChange(e.target.value)}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="">Neurčené</option>
               <option value="yes">Áno</option>
@@ -140,18 +140,18 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Popis súčasného stavu</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Popis súčasného stavu</label>
           <textarea
             value={description}
             onChange={(e) => handleDescriptionChange(e.target.value)}
             rows={3}
-            className="w-full px-3 py-2.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">Hrany strechy a atika</h2>
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Hrany strechy a atika</h2>
         <EditableList
           columns={[
             { key: 'label', label: 'Označenie', placeholder: 'napr. Hrana A' },
@@ -180,8 +180,8 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
         />
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">Čiastkové plochy strechy</h2>
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Čiastkové plochy strechy</h2>
         <EditableList
           columns={[
             { key: 'label', label: 'Označenie', placeholder: 'napr. Časť A' },
@@ -211,8 +211,8 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
         />
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">Odkvapový systém</h2>
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Odkvapový systém</h2>
         <datalist id="gutter-item-types">
           {GUTTER_ITEM_SUGGESTIONS.map((s) => (
             <option key={s} value={s} />
@@ -246,8 +246,8 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
         />
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">Zvody</h2>
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Zvody</h2>
         <EditableList
           columns={[
             { key: 'label', label: 'Označenie', placeholder: 'napr. Zvod 1' },
@@ -274,8 +274,8 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
         />
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">Technické riešenie</h2>
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Technické riešenie</h2>
         <TechnicalSolutionChecklist
           inspectionId={inspection.id}
           items={inspection.technicalSolutionItems}
@@ -283,8 +283,8 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
         />
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-6">
-        <h2 className="text-sm font-semibold text-slate-700 mb-3">Doplnkové práce navyše</h2>
+      <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Doplnkové práce navyše</h2>
         <AdditionalServicesList
           items={inspection.additionalServices}
           onCreate={async (data) => {
@@ -307,7 +307,7 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
 
 function SaveIndicator({ status }: { status: BasicSaveStatus }) {
   if (status === 'saving') return <span className="text-xs text-slate-400">Ukladám…</span>
-  if (status === 'saved') return <span className="text-xs text-green-600">Uložené</span>
-  if (status === 'error') return <span className="text-xs text-red-600">Chyba pri ukladaní</span>
+  if (status === 'saved') return <span className="text-xs text-green-600 dark:text-green-400">Uložené</span>
+  if (status === 'error') return <span className="text-xs text-red-600 dark:text-red-400">Chyba pri ukladaní</span>
   return null
 }

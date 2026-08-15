@@ -71,7 +71,7 @@ export default function PhotosTab({ inspection, onChange }: Props) {
   return (
     <div className="max-w-4xl space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-700">Fotky strechy</h2>
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Fotky strechy</h2>
         <label className="px-4 py-2.5 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition cursor-pointer">
           {uploading ? 'Nahrávam…' : '+ Pridať fotky'}
           <input
@@ -87,16 +87,16 @@ export default function PhotosTab({ inspection, onChange }: Props) {
         </label>
       </div>
 
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+      {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
       {photos.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-lg p-12 text-slate-500 text-sm text-center">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-12 text-slate-500 dark:text-slate-400 text-sm text-center">
           Zatiaľ žiadne fotky. Pridaj ich tlačidlom vyššie.
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {photos.map((photo) => (
-            <div key={photo.id} className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+            <div key={photo.id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
               <img src={photo.url} alt={photo.caption ?? ''} className="w-full h-40 object-cover" />
               <div className="p-2 space-y-1.5">
                 <div className="flex items-center gap-2">

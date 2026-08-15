@@ -86,7 +86,7 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
           value={String(value ?? '')}
           disabled={disabled}
           onChange={(e) => onCommit(e.target.value)}
-          className="w-full px-2 py-1 border border-transparent hover:border-slate-200 focus:border-brand-400 rounded text-sm focus:outline-none bg-transparent"
+          className="w-full px-2 py-1 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 focus:border-brand-400 rounded text-sm focus:outline-none bg-transparent dark:text-slate-100"
         >
           {col.options?.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -101,11 +101,11 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
 
   return (
     <div className="space-y-2">
-      {error && <div className="text-red-600 text-xs">{error}</div>}
+      {error && <div className="text-red-600 dark:text-red-400 text-xs">{error}</div>}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-slate-500 border-b border-slate-200">
+            <tr className="text-left text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               {columns.map((col) => (
                 <th key={col.key} className="py-1.5 pr-3 font-medium">
                   {col.label}
@@ -120,11 +120,11 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
               // changes — including server-derived fields like a recomputed total that update
               // as a side effect of editing a different cell. Plain defaultValue-based inputs
               // otherwise never pick up that change since the row itself never re-mounts.
-              <tr key={`${item.id}:${JSON.stringify(item)}`} className="border-b border-slate-100">
+              <tr key={`${item.id}:${JSON.stringify(item)}`} className="border-b border-slate-100 dark:border-slate-700">
                 {columns.map((col) => (
                   <td key={col.key} className="py-1.5 pr-3">
                     {col.type === 'readonly' ? (
-                      <span className="px-2 py-1 text-slate-500">{item[col.key] ?? ''}</span>
+                      <span className="px-2 py-1 text-slate-600 dark:text-slate-400">{item[col.key] ?? ''}</span>
                     ) : col.type === 'checkbox' || col.type === 'select' ? (
                       renderCell(col, item[col.key], (value) => handleCellUpdate(item.id, col.key, value), busyId === item.id)
                     ) : (
@@ -137,7 +137,7 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
                             handleCellUpdate(item.id, col.key, e.target.value)
                           }
                         }}
-                        className="w-full px-2 py-1 border border-transparent hover:border-slate-200 focus:border-brand-400 rounded text-sm focus:outline-none"
+                        className="w-full px-2 py-1 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 focus:border-brand-400 rounded text-sm focus:outline-none dark:bg-transparent dark:text-slate-100"
                       />
                     )}
                   </td>
@@ -147,7 +147,7 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
                     <button
                       onClick={() => handleDelete(item.id)}
                       disabled={busyId === item.id}
-                      className="text-slate-400 hover:text-red-600 px-1"
+                      className="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 px-1"
                       title="Vymazať"
                     >
                       ×
@@ -160,7 +160,7 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
               {columns.map((col) => (
                 <td key={col.key} className="py-1.5 pr-3">
                   {col.type === 'readonly' ? (
-                    <span className="px-2 py-1 text-slate-300">auto</span>
+                    <span className="px-2 py-1 text-slate-300 dark:text-slate-600">auto</span>
                   ) : col.type === 'checkbox' || col.type === 'select' ? (
                     renderCell(col, draft[col.key], (value) => setDraft((d) => ({ ...d, [col.key]: value })), false)
                   ) : (
@@ -172,7 +172,7 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleAdd()
                       }}
-                      className="w-full px-2 py-1 border border-dashed border-slate-300 rounded text-sm focus:outline-none focus:border-brand-400"
+                      className="w-full px-2 py-1 border border-dashed border-slate-300 dark:border-slate-600 rounded text-sm focus:outline-none focus:border-brand-400 dark:bg-transparent dark:text-slate-100"
                     />
                   )}
                 </td>
@@ -181,7 +181,7 @@ export default function EditableList({ columns, items, onCreate, onUpdate, onDel
                 <button
                   onClick={handleAdd}
                   disabled={creating}
-                  className="text-brand-600 hover:text-brand-700 text-xs font-medium px-1"
+                  className="text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 text-xs font-medium px-1"
                 >
                   {creating ? '…' : '+'}
                 </button>

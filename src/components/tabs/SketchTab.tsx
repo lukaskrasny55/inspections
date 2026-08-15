@@ -57,7 +57,7 @@ export default function SketchTab({ inspection, onChange }: Props) {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-700">Technický výkres</h2>
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Technický výkres</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setDrawing(true)}
@@ -80,18 +80,18 @@ export default function SketchTab({ inspection, onChange }: Props) {
         </div>
       </div>
 
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+      {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
       {!sketch ? (
-        <div className="bg-white border border-slate-200 rounded-lg p-12 text-slate-500 text-sm text-center">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-12 text-slate-500 dark:text-slate-400 text-sm text-center">
           Zatiaľ žiadny výkres. Nahraj foto vlastnej kresby, odfotený papier alebo súbor.
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3">
           {isImage ? (
-            <img src={sketch.fileUrl ?? ''} alt="Technický výkres" className="w-full rounded-md border border-slate-100" />
+            <img src={sketch.fileUrl ?? ''} alt="Technický výkres" className="w-full rounded-md border border-slate-100 dark:border-slate-700" />
           ) : (
-            <div className="p-8 text-center text-slate-500 text-sm bg-slate-50 rounded-md">Súbor je nahraný (nie je obrázok, náhľad nie je k dispozícii).</div>
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-900 rounded-md">Súbor je nahraný (nie je obrázok, náhľad nie je k dispozícii).</div>
           )}
           <button onClick={handleDelete} disabled={deleting} className="text-xs font-medium text-red-500 hover:text-red-700">
             {deleting ? 'Mažem…' : 'Vymazať výkres'}

@@ -55,12 +55,12 @@ export default function SummaryPage() {
   }, [from, to])
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
+        <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
           ← Zoznam zákaziek
         </Link>
-        <h1 className="text-xl font-semibold text-slate-900">Súhrn vykonaných prác</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Súhrn vykonaných prác</h1>
         <div className="w-32" />
       </header>
 
@@ -71,7 +71,7 @@ export default function SummaryPage() {
               key={p}
               onClick={() => setPreset(p)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                preset === p ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                preset === p ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
             >
               {p === 'month' ? 'Tento mesiac' : p === 'quarter' ? 'Tento kvartál' : 'Tento rok'}
@@ -79,51 +79,51 @@ export default function SummaryPage() {
           ))}
         </div>
 
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-slate-500 dark:text-slate-400">
           {toISODate(from)} – {toISODate(to)} · realizácie podľa dátumu ukončenia (Realizácia do)
         </div>
 
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
         {loading ? (
-          <div className="text-slate-500 text-sm py-8 text-center">Načítavam…</div>
+          <div className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">Načítavam…</div>
         ) : (
           data && (
             <>
               <div className="flex gap-3 text-sm">
-                <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
-                  <div className="text-2xl font-semibold text-slate-900">{data.count}</div>
-                  <div className="text-slate-500">dokončených realizácií</div>
+                <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+                  <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{data.count}</div>
+                  <div className="text-slate-500 dark:text-slate-400">dokončených realizácií</div>
                 </div>
-                <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
-                  <div className="text-2xl font-semibold text-slate-900">{data.totalAreaM2.toLocaleString('sk-SK')} m²</div>
-                  <div className="text-slate-500">spracovaná plocha</div>
+                <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+                  <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{data.totalAreaM2.toLocaleString('sk-SK')} m²</div>
+                  <div className="text-slate-500 dark:text-slate-400">spracovaná plocha</div>
                 </div>
-                <div className="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-3">
-                  <div className="text-2xl font-semibold text-slate-900">{formatMoney(data.totalRevenue)}</div>
-                  <div className="text-slate-500">obrat (po zľave)</div>
+                <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+                  <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{formatMoney(data.totalRevenue)}</div>
+                  <div className="text-slate-500 dark:text-slate-400">obrat (po zľave)</div>
                 </div>
               </div>
 
               {data.items.length === 0 ? (
-                <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-400 text-sm">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 text-center text-slate-400 text-sm">
                   V tomto období nie sú dokončené žiadne realizácie.
                 </div>
               ) : (
-                <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-100">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg divide-y divide-slate-100 dark:divide-slate-700">
                   {data.items.map((item) => (
                     <div key={item.id} className="px-4 py-3 flex items-center justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="text-sm font-medium text-slate-900 truncate">
+                        <div className="text-sm font-medium text-slate-900 dark:text-slate-50 truncate">
                           {item.customerName} <span className="text-slate-400 font-normal">· {item.label}</span>
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
                           {item.referenceNumber}
                           {item.realizationEndDate ? ` · ${item.realizationEndDate.slice(0, 10)}` : ''}
                           {item.areaM2 !== null ? ` · ${item.areaM2} m²` : ''}
                         </div>
                       </div>
-                      <div className="text-sm font-medium text-slate-900 shrink-0">{formatMoney(item.revenue)}</div>
+                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 shrink-0">{formatMoney(item.revenue)}</div>
                     </div>
                   ))}
                 </div>

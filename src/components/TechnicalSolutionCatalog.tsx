@@ -26,12 +26,12 @@ export default function TechnicalSolutionCatalog() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <div className="text-slate-500 text-sm py-8 text-center">Načítavam…</div>
+  if (loading) return <div className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">Načítavam…</div>
 
   return (
     <div className="space-y-4">
-      {error && <div className="text-red-600 text-sm">{error}</div>}
-      <p className="text-sm text-slate-500">
+      {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Položky ponúkané v sekcii „Technické riešenie" checklistu — zaškrtnuté položky sa zapíšu do generovaného
         dokumentu „Návrh technického riešenia". Deaktivovaná položka zmizne z checklistu pre nové obhliadky, staré
         ponuky, ktoré ju použili, zostanú nezmenené.

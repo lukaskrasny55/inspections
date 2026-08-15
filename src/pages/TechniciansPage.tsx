@@ -17,20 +17,20 @@ export default function TechniciansPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <Link to="/" className="text-sm text-slate-500 hover:text-slate-700">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4">
+        <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
           ← Zoznam zákaziek
         </Link>
-        <h1 className="text-xl font-semibold text-slate-900 mt-1">Technici</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mt-1">Technici</h1>
       </header>
 
       <main className="max-w-2xl mx-auto p-6 space-y-4">
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
         {loading ? (
-          <div className="text-slate-500 text-sm py-8 text-center">Načítavam…</div>
+          <div className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">Načítavam…</div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
             <EditableList
               columns={[
                 { key: 'name', label: 'Meno', placeholder: 'napr. Peter Novák' },

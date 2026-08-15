@@ -379,7 +379,7 @@ export default function QuoteTab({ inspection, onChange }: Props) {
             key={alt.id}
             onClick={() => setActiveId(alt.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-              active?.id === alt.id ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+              active?.id === alt.id ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
             }`}
           >
             {alt.label}
@@ -387,57 +387,57 @@ export default function QuoteTab({ inspection, onChange }: Props) {
         ))}
         <button
           onClick={() => setShowNewForm((v) => !v)}
-          className="px-4 py-2 rounded-full text-sm font-medium bg-brand-50 text-brand-700 hover:bg-brand-100"
+          className="px-4 py-2 rounded-full text-sm font-medium bg-brand-50 dark:bg-slate-700 text-brand-700 dark:text-slate-200 hover:bg-brand-100 dark:hover:bg-slate-600"
         >
           + Alternatíva
         </button>
       </div>
 
       {showNewForm && (
-        <form onSubmit={handleCreateAlternative} className="bg-white border border-slate-200 rounded-lg p-4 flex gap-3 items-end max-w-sm">
+        <form onSubmit={handleCreateAlternative} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex gap-3 items-end max-w-sm">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Označenie (napr. A)</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Označenie (napr. A)</label>
             <input
               autoFocus
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <button
             type="submit"
             disabled={creating || !newLabel.trim()}
-            className="px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium disabled:opacity-50"
+            className="px-4 py-2 rounded-md bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium disabled:opacity-50"
           >
             {creating ? '…' : 'Založiť'}
           </button>
         </form>
       )}
 
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+      {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
       {!active || !mainHandlers || !nadRamecHandlers ? (
-        <div className="bg-white border border-slate-200 rounded-lg p-8 text-slate-500 text-sm text-center">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 text-slate-500 dark:text-slate-400 text-sm text-center">
           Zatiaľ žiadna cenová alternatíva. Založ prvú tlačidlom „+ Alternatíva".
         </div>
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-slate-700">Cenová ponuka – alternatíva {active.label}</h2>
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Cenová ponuka – alternatíva {active.label}</h2>
             <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 text-xs text-slate-600">
+              <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
                 Zľava (%)
                 <input
                   type="number"
                   defaultValue={active.discountPercent}
                   onBlur={(e) => handleDiscountBlur(e.target.value)}
-                  className="w-16 px-2 py-1 border border-slate-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-16 px-2 py-1 border border-slate-300 dark:border-slate-600 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </label>
               <button
                 onClick={handleGenerateFromChecklist}
                 disabled={generating}
-                className="text-xs font-medium text-brand-600 hover:text-brand-700 disabled:opacity-50"
+                className="text-xs font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 disabled:opacity-50"
               >
                 {generating ? 'Generujem…' : '↻ Generovať z checklistu'}
               </button>
@@ -445,7 +445,7 @@ export default function QuoteTab({ inspection, onChange }: Props) {
                 href={`/api/generate-quote-pdf?id=${active.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-md"
+                className="text-xs font-medium text-white dark:text-slate-900 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-300 px-3 py-1.5 rounded-md"
               >
                 👁 Náhľad: Cenová ponuka
               </a>
@@ -453,7 +453,7 @@ export default function QuoteTab({ inspection, onChange }: Props) {
                 href={`/api/generate-technical-pdf?id=${active.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-white bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-md"
+                className="text-xs font-medium text-white dark:text-slate-900 bg-slate-700 dark:bg-slate-300 hover:bg-slate-600 dark:hover:bg-slate-400 px-3 py-1.5 rounded-md"
               >
                 👁 Náhľad: Návrh riešenia
               </a>
@@ -463,21 +463,21 @@ export default function QuoteTab({ inspection, onChange }: Props) {
             </div>
           </div>
           <div className="flex items-center justify-between -mt-2">
-            <div className="flex items-center gap-4 text-xs text-slate-500">
-              <a href={`/api/generate-quote-document?id=${active.id}`} className="hover:text-slate-700 underline decoration-dotted">
+            <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+              <a href={`/api/generate-quote-document?id=${active.id}`} className="hover:text-slate-700 dark:hover:text-white underline decoration-dotted">
                 Stiahnuť Word (ponuka)
               </a>
-              <a href={`/api/generate-technical-document?id=${active.id}`} className="hover:text-slate-700 underline decoration-dotted">
+              <a href={`/api/generate-technical-document?id=${active.id}`} className="hover:text-slate-700 dark:hover:text-white underline decoration-dotted">
                 Stiahnuť Word (riešenie)
               </a>
             </div>
             <div className="flex items-center gap-3">
-              <label className="flex items-center gap-1.5 text-xs text-slate-600">
+              <label className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
                 <input
                   type="checkbox"
                   checked={includeTechnical}
                   onChange={(e) => setIncludeTechnical(e.target.checked)}
-                  className="rounded border-slate-300"
+                  className="rounded border-slate-300 dark:border-slate-600"
                 />
                 Poslať aj návrh riešenia
               </label>
@@ -485,108 +485,108 @@ export default function QuoteTab({ inspection, onChange }: Props) {
                 onClick={handleSendQuoteEmail}
                 disabled={sendingEmail || !inspection.customer.email}
                 title={!inspection.customer.email ? 'Zákazník nemá vyplnený email (Kontakt tab)' : undefined}
-                className="text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-md disabled:opacity-50"
+                className="text-xs font-medium text-brand-700 dark:text-slate-200 bg-brand-50 dark:bg-slate-700 hover:bg-brand-100 dark:hover:bg-slate-600 px-3 py-1.5 rounded-md disabled:opacity-50"
               >
                 {sendingEmail ? 'Odosielam…' : '✉ Odoslať zákazníkovi'}
               </button>
             </div>
           </div>
-          {emailStatus && <div className="text-xs text-slate-500 -mt-2">{emailStatus}</div>}
+          {emailStatus && <div className="text-xs text-slate-500 dark:text-slate-400 -mt-2">{emailStatus}</div>}
           {missingFields.length > 0 && (
-            <div className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-3 py-2 -mt-2">
+            <div className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-800 rounded-md px-3 py-2 -mt-2">
               ⚠ V dokumente budú prázdne polia — chýba: {missingFields.join(', ')}.
             </div>
           )}
 
-          <section className="bg-white border border-slate-200 rounded-lg p-6">
+          <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="col-span-2">
-                <label className="block text-xs font-medium text-slate-500 mb-1">Popis alternatívy</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Popis alternatívy</label>
                 <input
                   key={active.id}
                   defaultValue={active.description ?? ''}
                   placeholder="napr. zo zateplením"
                   onBlur={(e) => handleDescriptionBlur(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Dátum vystavenia</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Dátum vystavenia</label>
                 <input
                   key={`${active.id}-issued`}
                   type="date"
                   defaultValue={active.issuedDate ? active.issuedDate.slice(0, 10) : ''}
                   onBlur={(e) => handleDateBlur('issuedDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Platí do</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Platí do</label>
                 <input
                   key={`${active.id}-valid`}
                   type="date"
                   defaultValue={active.validUntil ? active.validUntil.slice(0, 10) : ''}
                   onBlur={(e) => handleDateBlur('validUntil', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Záruka (roky)</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Záruka (roky)</label>
                 <input
                   key={`${active.id}-warranty`}
                   type="number"
                   defaultValue={active.warrantyYears ?? ''}
                   onBlur={(e) => handleWarrantyBlur(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Realizácia od</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Realizácia od</label>
                 <input
                   key={`${active.id}-realization-start`}
                   type="date"
                   defaultValue={active.realizationStartDate ? active.realizationStartDate.slice(0, 10) : ''}
                   onBlur={(e) => handleDateBlur('realizationStartDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Realizácia do</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Realizácia do</label>
                 <input
                   key={`${active.id}-realization-end`}
                   type="date"
                   defaultValue={active.realizationEndDate ? active.realizationEndDate.slice(0, 10) : ''}
                   onBlur={(e) => handleDateBlur('realizationEndDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Čas realizácie od</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas realizácie od</label>
                 <input
                   key={`${active.id}-realization-start-time`}
                   type="time"
                   defaultValue={active.realizationStartTime ?? ''}
                   onBlur={(e) => handleTimeBlur('realizationStartTime', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Čas realizácie do</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas realizácie do</label>
                 <input
                   key={`${active.id}-realization-end-time`}
                   type="time"
                   defaultValue={active.realizationEndTime ?? ''}
                   onBlur={(e) => handleTimeBlur('realizationEndTime', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-medium text-slate-500 mb-1">Materiálová skladba (pre Návrh technického riešenia)</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Materiálová skladba (pre Návrh technického riešenia)</label>
                 <select
                   key={`${active.id}-composition`}
                   value={active.materialCompositionId ?? ''}
                   onChange={(e) => handleCompositionChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
                   <option value="">— žiadna —</option>
                   {compositions.map((c) => (
@@ -599,19 +599,19 @@ export default function QuoteTab({ inspection, onChange }: Props) {
             </div>
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">
-            <h3 className="text-sm font-semibold text-slate-700">Hydroizolačné a zatepľovacie práce</h3>
+          <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Hydroizolačné a zatepľovacie práce</h3>
             <EditableList columns={LINE_ITEM_COLUMNS} items={mainItems} {...mainHandlers} />
             <SectionSummary {...mainTotals} discountPercent={discountPercent} />
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-lg p-6 space-y-3">
-            <h3 className="text-sm font-semibold text-slate-700">Tesárske a klampiarske práce (nad rámec)</h3>
+          <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Tesárske a klampiarske práce (nad rámec)</h3>
             <EditableList columns={LINE_ITEM_COLUMNS} items={nadRamecItems} {...nadRamecHandlers} />
             <SectionSummary {...nadRamecTotals} discountPercent={discountPercent} />
           </section>
 
-          <div className="bg-slate-900 text-white rounded-lg p-6 flex justify-end">
+          <div className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg p-6 flex justify-end">
             <div className="text-right space-y-1">
               <div className="text-xs text-slate-300">Spolu {grandSubtotal.toFixed(2)} € · Zľava {discountPercent}% (−{grandDiscountAmount.toFixed(2)} €)</div>
               <div className="text-2xl font-semibold">Celkom na úhradu: {grandTotal.toFixed(2)} €</div>
@@ -635,13 +635,13 @@ function SectionSummary({
   discountPercent: number
 }) {
   return (
-    <div className="flex justify-end pt-2 border-t border-slate-100">
+    <div className="flex justify-end pt-2 border-t border-slate-100 dark:border-slate-700">
       <div className="text-right text-sm space-y-0.5">
-        <div className="text-slate-500">Spolu: {subtotal.toFixed(2)} €</div>
-        <div className="text-slate-500">
+        <div className="text-slate-500 dark:text-slate-400">Spolu: {subtotal.toFixed(2)} €</div>
+        <div className="text-slate-500 dark:text-slate-400">
           Zľava {discountPercent}%: −{discountAmount.toFixed(2)} €
         </div>
-        <div className="font-semibold text-slate-900">Celkom na úhradu: {totalAfterDiscount.toFixed(2)} €</div>
+        <div className="font-semibold text-slate-900 dark:text-slate-50">Celkom na úhradu: {totalAfterDiscount.toFixed(2)} €</div>
       </div>
     </div>
   )
