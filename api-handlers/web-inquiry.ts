@@ -51,18 +51,6 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   const authHeader = req.headers.authorization
   const provided = typeof authHeader === 'string' ? authHeader.replace(/^Bearer\s+/i, '') : ''
   if (provided !== expectedSecret) {
-    // Temporary diagnostic (no secret values logged) — comparing lengths and
-    // trimmed equality to find out whether this is a whitespace/copy-paste
-    // mismatch vs a genuinely different secret. Remove once resolved.
-    console.error('web-inquiry: secret mismatch', {
-      providedLength: provided.length,
-      expectedLength: expectedSecret.length,
-      matchesTrimmed: provided.trim() === expectedSecret.trim(),
-      providedFirst4: provided.slice(0, 4),
-      expectedFirst4: expectedSecret.slice(0, 4),
-      providedLast4: provided.slice(-4),
-      expectedLast4: expectedSecret.slice(-4),
-    })
     return res.status(401).json({ error: 'Neplatný token.' })
   }
 

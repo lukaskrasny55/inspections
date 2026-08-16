@@ -14,6 +14,11 @@ export default async function middleware(request: Request) {
   const url = new URL(request.url)
   if (url.pathname.startsWith('/api/session-')) return
 
+  // Server-to-server call from tmshydra.com — no browser session cookie
+  // exists for it. Its own Bearer-secret check (INSPECTIONS_WEBHOOK_SECRET,
+  // see api-handlers/web-inquiry.ts) is the auth for this route instead.
+  if (url.pathname === '/api/web-inquiry') return
+
   // Vercel Cron triggers this endpoint directly with no session cookie —
   // Vercel automatically attaches `Authorization: Bearer $CRON_SECRET` to
   // cron-triggered requests when that env var is set, so verifying it here
