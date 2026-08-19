@@ -27,6 +27,7 @@ enum LineItemSection {
 enum LineItemSource {
   auto_calculated
   manual
+  from_checklist
 }
 
 enum ChecklistItemCategory {
@@ -199,6 +200,7 @@ model TechnicalSolutionItem {
 
   inspection    Inspection            @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
   catalogItem   ChecklistItemCatalog  @relation(fields: [catalogItemId], references: [id])
+  quoteLineItems QuoteLineItem[]
 
   @@unique([inspectionId, catalogItemId])
   @@map("technical_solution_items")
@@ -325,19 +327,21 @@ model QuoteAlternative {
 }
 
 model QuoteLineItem {
-  id                  String           @id @default(cuid())
-  quoteAlternativeId  String           @map("quote_alternative_id")
-  description         String
-  plannedQty          Decimal?         @map("planned_qty") @db.Decimal(10, 2)
-  wastePercent        Decimal?         @map("waste_percent") @db.Decimal(5, 2)
-  unit                String           @default("ks")
-  unitPriceSnapshot    Decimal         @map("unit_price_snapshot") @db.Decimal(10, 2)
-  total               Decimal          @db.Decimal(10, 2)
-  section             LineItemSection  @default(main)
-  source              LineItemSource   @default(auto_calculated)
-  sequenceOrder       Int              @default(0) @map("sequence_order")
+  id                     String           @id @default(cuid())
+  quoteAlternativeId     String           @map("quote_alternative_id")
+  technicalSolutionItemId String?         @map("technical_solution_item_id")
+  description            String
+  plannedQty             Decimal?         @map("planned_qty") @db.Decimal(10, 2)
+  wastePercent           Decimal?         @map("waste_percent") @db.Decimal(5, 2)
+  unit                   String           @default("ks")
+  unitPriceSnapshot       Decimal         @map("unit_price_snapshot") @db.Decimal(10, 2)
+  total                  Decimal          @db.Decimal(10, 2)
+  section                LineItemSection  @default(main)
+  source                 LineItemSource   @default(auto_calculated)
+  sequenceOrder          Int              @default(0) @map("sequence_order")
 
-  quoteAlternative    QuoteAlternative @relation(fields: [quoteAlternativeId], references: [id], onDelete: Cascade)
+  quoteAlternative       QuoteAlternative       @relation(fields: [quoteAlternativeId], references: [id], onDelete: Cascade)
+  technicalSolutionItem  TechnicalSolutionItem? @relation(fields: [technicalSolutionItemId], references: [id], onDelete: SetNull)
 
   @@map("quote_line_items")
 }

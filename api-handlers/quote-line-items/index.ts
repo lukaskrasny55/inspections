@@ -18,7 +18,7 @@ function computeTotal(plannedQty: number, unitPrice: number, wastePercent: numbe
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method === 'POST') {
-    const { id, quoteAlternativeId, description, plannedQty, unitPriceSnapshot, wastePercent, unit, section, source } = req.body || {}
+    const { id, quoteAlternativeId, description, plannedQty, unitPriceSnapshot, wastePercent, unit, section, source, technicalSolutionItemId } = req.body || {}
 
     if (typeof quoteAlternativeId !== 'string' || !quoteAlternativeId) {
       return res.status(400).json({ error: 'Chýba quoteAlternativeId.' })
@@ -40,6 +40,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       data: {
         id: typeof id === 'string' && id ? id : undefined,
         quoteAlternativeId,
+        technicalSolutionItemId: typeof technicalSolutionItemId === 'string' && technicalSolutionItemId ? technicalSolutionItemId : undefined,
         description: description.trim(),
         plannedQty: qty,
         unitPriceSnapshot: price,
@@ -47,7 +48,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         unit: typeof unit === 'string' && unit.trim() ? unit.trim() : 'ks',
         total: computeTotal(qty, price, waste),
         section: section === 'nad_ramec' ? 'nad_ramec' : 'main',
-        source: source === 'auto_calculated' ? 'auto_calculated' : 'manual',
+        source: source === 'auto_calculated' ? 'auto_calculated' : source === 'from_checklist' ? 'from_checklist' : 'manual',
         sequenceOrder: count,
       },
     })

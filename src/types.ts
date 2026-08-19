@@ -140,10 +140,11 @@ export interface InspectionSketch {
 }
 
 export type LineItemSection = 'main' | 'nad_ramec'
-export type LineItemSource = 'auto_calculated' | 'manual'
+export type LineItemSource = 'auto_calculated' | 'manual' | 'from_checklist'
 
 export interface QuoteLineItem {
   id: string
+  technicalSolutionItemId: string | null
   description: string
   plannedQty: string | null
   wastePercent: string | null

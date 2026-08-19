@@ -275,12 +275,14 @@ export async function createQuoteLineItem(data: {
   wastePercent?: number
   unit?: string
   section?: 'main' | 'nad_ramec'
-  source?: 'auto_calculated' | 'manual'
+  source?: 'auto_calculated' | 'manual' | 'from_checklist'
+  technicalSolutionItemId?: string
 }) {
   const id = newId()
   return postJSON<QuoteLineItem>('/api/quote-line-items', { id, ...data }, () => ({
     id,
     quoteAlternativeId: data.quoteAlternativeId,
+    technicalSolutionItemId: data.technicalSolutionItemId ?? null,
     description: data.description,
     plannedQty: String(data.plannedQty ?? 0),
     unit: data.unit ?? 'ks',
