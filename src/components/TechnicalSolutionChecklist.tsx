@@ -167,7 +167,7 @@ export default function TechnicalSolutionChecklist({ inspectionId, items, onChan
       ) : (
         <button
           onClick={() => setShowAddForm(true)}
-          className="text-xs font-medium text-brand-600 hover:text-brand-700 px-1"
+          className="text-xs font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 px-1"
         >
           + Pridať vlastnú položku
         </button>

@@ -63,7 +63,7 @@ export default function AdditionalServicesList({ items, onCreate, onUpdate, onDe
           className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
         <div className="flex items-center gap-3">
-          <label className="text-xs font-medium text-brand-600 hover:text-brand-700 cursor-pointer">
+          <label className="text-xs font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 cursor-pointer">
             {uploadingNew ? 'Nahrávam…' : newPhotoUrl ? 'Fotka pripravená ✓' : '+ Pridať fotku'}
             <input
               ref={newFileInputRef}
@@ -131,7 +131,7 @@ function ServiceCard({
         />
         {error && <div className="text-red-600 dark:text-red-400 text-xs">{error}</div>}
         <div className="flex items-center gap-3">
-          <label className="text-xs font-medium text-brand-600 hover:text-brand-700 cursor-pointer">
+          <label className="text-xs font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 cursor-pointer">
             {uploading ? 'Nahrávam…' : item.photoUrl ? 'Zmeniť fotku' : '+ Pridať fotku'}
             <input
               ref={fileInputRef}

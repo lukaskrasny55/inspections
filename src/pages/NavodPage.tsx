@@ -38,7 +38,7 @@ export default function NavodPage() {
         {!query.trim() && (
           <nav className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
             {HELP_SECTIONS.map((s) => (
-              <a key={s.id} href={`#${s.id}`} className="text-brand-600 hover:text-brand-700 hover:underline">
+              <a key={s.id} href={`#${s.id}`} className="text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 hover:underline">
                 {s.title}
               </a>
             ))}

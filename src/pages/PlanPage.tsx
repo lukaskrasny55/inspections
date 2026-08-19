@@ -305,7 +305,7 @@ export default function PlanPage() {
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Plán</h1>
         <a
           href={pdfUrl}
-          className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"
+          className="text-sm font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 flex items-center gap-1"
         >
           ⬇ PDF
         </a>
@@ -349,7 +349,7 @@ export default function PlanPage() {
             </button>
             <button
               onClick={() => setAnchor(new Date())}
-              className="ml-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-600 hover:bg-brand-50"
+              className="ml-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-600 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-slate-700"
             >
               Dnes
             </button>
@@ -375,7 +375,7 @@ export default function PlanPage() {
           {!showForm ? (
             <button
               onClick={() => setShowForm(true)}
-              className="text-sm font-medium text-brand-600 hover:text-brand-700"
+              className="text-sm font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200"
             >
               + Iná udalosť
             </button>

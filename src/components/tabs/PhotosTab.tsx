@@ -118,7 +118,7 @@ export default function PhotosTab({ inspection, onChange }: Props) {
                 </div>
                 <button
                   onClick={() => setAnnotatingPhoto(photo)}
-                  className="text-xs font-medium text-brand-600 hover:text-brand-700"
+                  className="text-xs font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200"
                 >
                   ✎ Označiť na fotke
                 </button>
