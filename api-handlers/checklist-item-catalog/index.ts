@@ -37,10 +37,23 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       return res.status(400).json({ error: 'Neplatná kategória.' })
     }
 
+    // Katalóg je spoločný a trvalý naprieč všetkými zákazkami — bez tejto
+    // kontroly by si každá obhliadka mohla vytvoriť vlastnú "Oprava komína",
+    // "oprava komína", "Oprava komina" atď. Porovnávame orezaný názov bez
+    // ohľadu na veľkosť písmen; ak zhoda existuje, vrátime existujúcu
+    // položku namiesto vytvorenia duplicity.
+    const trimmedName = name.trim()
+    const existing = await prisma.checklistItemCatalog.findFirst({
+      where: { name: { equals: trimmedName, mode: 'insensitive' } },
+    })
+    if (existing) {
+      return res.status(200).json({ ...existing, reused: true })
+    }
+
     const item = await prisma.checklistItemCatalog.create({
       data: {
         id: typeof id === 'string' && id ? id : undefined,
-        name: name.trim(),
+        name: trimmedName,
         unit: typeof unit === 'string' && unit.trim() ? unit.trim() : 'ks',
         defaultUnitPrice: price,
         category: category as 'material' | 'prace' | 'ine',
