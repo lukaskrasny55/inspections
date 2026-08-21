@@ -2,12 +2,14 @@ import { useRef, useState } from 'react'
 import EditableList from '../EditableList'
 import AdditionalServicesList from '../AdditionalServicesList'
 import TechnicalSolutionChecklist from '../TechnicalSolutionChecklist'
+import CatalogItemPicker from '../CatalogItemPicker'
 import {
   createAdditionalService,
   createDrainDownspout,
   createGutterSystemItem,
   createRoofAreaSection,
   createRoofEdge,
+  createTechnicalSolutionItem,
   deleteAdditionalService,
   deleteDrainDownspout,
   deleteGutterSystemItem,
@@ -20,7 +22,7 @@ import {
   updateRoofAreaSection,
   updateRoofEdge,
 } from '../../lib/api'
-import type { InspectionDetail } from '../../types'
+import type { ChecklistItemCatalog, InspectionDetail } from '../../types'
 
 type BasicSaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
@@ -87,6 +89,17 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
   function handleInspectionTimeChange(value: string) {
     setInspectionTime(value)
     scheduleBasicSave({ inspectionTime: value || null }, { inspectionTime: value || null })
+  }
+
+  // Zdieľané pre pickery pod Odkvapovým systémom aj Zvodmi (aj pre ten pod
+  // Technickým riešením) — všetky tri píšu do toho istého checklistu
+  // (technicalSolutionItems), ktorý sa neskôr tlačidlom "Generovať z
+  // checklistu" prenesie do cenovej ponuky. Preto sa pridaná položka odtiaľto
+  // zobrazí v zozname nižšie pod "Technické riešenie" — to je zámer, nie chyba.
+  const addedCatalogIds = new Set(inspection.technicalSolutionItems.map((i) => i.catalogItemId))
+  async function addCatalogItemToChecklist(catalogItem: ChecklistItemCatalog) {
+    const created = await createTechnicalSolutionItem({ inspectionId: inspection.id, catalogItemId: catalogItem.id, isChecked: true })
+    onChange({ technicalSolutionItems: [...inspection.technicalSolutionItems, { ...created, catalogItem }] })
   }
 
   return (
@@ -244,6 +257,9 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
             onChange({ gutterSystemItems: inspection.gutterSystemItems.filter((e) => e.id !== id) })
           }}
         />
+        <div className="mt-3">
+          <CatalogItemPicker excludeCatalogIds={addedCatalogIds} onAdd={addCatalogItemToChecklist} />
+        </div>
       </section>
 
       <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
@@ -272,6 +288,9 @@ export default function ChecklistTab({ inspection, onChange }: Props) {
             onChange({ drainDownspouts: inspection.drainDownspouts.filter((e) => e.id !== id) })
           }}
         />
+        <div className="mt-3">
+          <CatalogItemPicker excludeCatalogIds={addedCatalogIds} onAdd={addCatalogItemToChecklist} />
+        </div>
       </section>
 
       <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
