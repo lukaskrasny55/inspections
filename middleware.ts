@@ -19,10 +19,6 @@ export default async function middleware(request: Request) {
   // see api-handlers/web-inquiry.ts) is the auth for this route instead.
   if (url.pathname === '/api/web-inquiry') return
 
-  // TEMPORARY: one-off schema-fix utility, has its own token check
-  // (see api-handlers/admin-fix-schema.ts). Remove alongside that file.
-  if (url.pathname === '/api/admin-fix-schema') return
-
   // Vercel Cron triggers this endpoint directly with no session cookie —
   // Vercel automatically attaches `Authorization: Bearer $CRON_SECRET` to
   // cron-triggered requests when that env var is set, so verifying it here

@@ -22,7 +22,6 @@ import type { IncomingMessage, ServerResponse } from 'http'
 // bundler-mode TS resolution, refuses to resolve a bare `../foo` specifier
 // when both `foo.js` and a `foo/` directory exist (ERR_UNSUPPORTED_DIR_IMPORT)
 // — so those handler files live at `api-handlers/<name>/index.ts`.
-import adminFixSchema from '../api-handlers/admin-fix-schema.js'
 import additionalServices from '../api-handlers/additional-services/index.js'
 import additionalServicesId from '../api-handlers/additional-services/[id].js'
 import sessionCheck from '../api-handlers/session-check.js'
@@ -89,7 +88,6 @@ type Handler = (req: any, res: any) => unknown
 
 // Static (non-dynamic) routes, keyed by the path after `/api/`.
 const STATIC_ROUTES: Record<string, Handler> = {
-  'admin-fix-schema': adminFixSchema,
   'additional-services': additionalServices,
   'session-check': sessionCheck,
   'session-login': sessionLogin,
