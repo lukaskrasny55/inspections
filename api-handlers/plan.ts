@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import { prisma } from '../lib/prisma.js'
+import { ensureCalendarSchema } from '../lib/ensure-schema.js'
 
 interface ApiRequest extends IncomingMessage {
   query: Record<string, string | string[] | undefined>
@@ -25,6 +26,7 @@ export interface PlanEvent {
   label: string | null
   title: string | null
   notes: string | null
+  inquiryStage: string | null
 }
 
 function param(value: string | string[] | undefined): string | undefined {
@@ -32,6 +34,7 @@ function param(value: string | string[] | undefined): string | undefined {
 }
 
 export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise<PlanEvent[]> {
+  await ensureCalendarSchema()
   const inspectionsWithVisit = await prisma.inspection.findMany({
     where: range ? { inspectionDate: range } : { inspectionDate: { not: null } },
     include: { customer: true, technician: true },
@@ -69,6 +72,7 @@ export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise
       label: null,
       title: null,
       notes: null,
+      inquiryStage: null,
     })
   }
 
@@ -89,6 +93,7 @@ export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise
       label: alt.label,
       title: null,
       notes: null,
+      inquiryStage: null,
     })
   }
 
@@ -108,6 +113,8 @@ export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise
       label: null,
       title: ev.title,
       notes: ev.notes,
+      // Inquiries created before stages existed have no stage stored; treat them as still new.
+      inquiryStage: ev.inquiryStage ?? (ev.title.startsWith('Nový dopyt') ? 'new' : null),
     })
   }
 

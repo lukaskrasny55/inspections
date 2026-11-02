@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import { Resend } from 'resend'
 import { prisma } from '../lib/prisma.js'
+import { ensureCalendarSchema } from '../lib/ensure-schema.js'
 
 interface ApiResponse extends ServerResponse {
   status(code: number): ApiResponse
@@ -204,6 +205,7 @@ export default async function handler(_req: IncomingMessage, res: ApiResponse) {
     }
   }
 
+  await ensureCalendarSchema()
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: { date: range, reminderSentAt: null },
   })

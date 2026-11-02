@@ -8,7 +8,8 @@ import {
   updateInspection,
   updateQuoteAlternative,
 } from '../lib/api'
-import type { PlanEvent } from '../types'
+import { INQUIRY_STAGE_LABELS } from '../types'
+import type { InquiryStage, PlanEvent } from '../types'
 
 type Mode = 'week' | 'month'
 
@@ -28,6 +29,26 @@ const TYPE_BADGE: Record<PlanEvent['type'], string> = {
   obhliadka: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
   realizacia: 'bg-brand-100 dark:bg-slate-700 text-brand-700 dark:text-slate-200',
   ine: 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300',
+}
+
+// Colour per stage of a web inquiry: orange = waiting for a reply, blue = replied
+// / quote sent, green = order received, grey = declined, teal = job done.
+const STAGE_ORDER: InquiryStage[] = ['new', 'handled', 'ordered', 'declined', 'completed']
+
+const STAGE_BADGE: Record<InquiryStage, string> = {
+  new: 'bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300',
+  handled: 'bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300',
+  ordered: 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-300',
+  declined: 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
+  completed: 'bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300',
+}
+
+const STAGE_BORDER: Record<InquiryStage, string> = {
+  new: 'border-l-4 border-l-orange-400',
+  handled: 'border-l-4 border-l-sky-400',
+  ordered: 'border-l-4 border-l-green-500',
+  declined: 'border-l-4 border-l-slate-300 dark:border-l-slate-600 opacity-60',
+  completed: 'border-l-4 border-l-teal-500',
 }
 
 function toISODate(d: Date): string {
@@ -112,6 +133,7 @@ export default function PlanPage() {
   const [editForm, setEditForm] = useState<EditForm>(EMPTY_FORM)
   const [editError, setEditError] = useState<string | null>(null)
   const [savingEdit, setSavingEdit] = useState(false)
+  const [onlyOpen, setOnlyOpen] = useState(false)
 
   const { from, to } = useMemo(() => rangeForMode(mode, anchor), [mode, anchor])
 
@@ -149,6 +171,7 @@ export default function PlanPage() {
   const eventsByDay = useMemo(() => {
     const map = new Map<string, PlanEvent[]>()
     for (const ev of events) {
+      if (onlyOpen && ev.inquiryStage !== 'new') continue
       const start = new Date(ev.date)
       const end = ev.endDate ? new Date(ev.endDate) : start
       const cursor = new Date(start)
@@ -163,14 +186,26 @@ export default function PlanPage() {
       }
     }
     return map
-  }, [events])
+  }, [events, onlyOpen])
 
   const summary = useMemo(() => {
     const obhliadky = events.filter((e) => e.type === 'obhliadka').length
     const realizacie = events.filter((e) => e.type === 'realizacia').length
     const ine = events.filter((e) => e.type === 'ine').length
-    return { obhliadky, realizacie, ine }
+    const openInquiries = events.filter((e) => e.inquiryStage === 'new').length
+    return { obhliadky, realizacie, ine, openInquiries }
   }, [events])
+
+  async function handleSetStage(ev: PlanEvent, stage: InquiryStage) {
+    const previous = events
+    setEvents((list) => list.map((e) => (e.id === ev.id ? { ...e, inquiryStage: stage } : e)))
+    try {
+      await updateCalendarEvent(rawId(ev), { inquiryStage: stage })
+    } catch (err) {
+      setEvents(previous)
+      setError(err instanceof Error ? err.message : 'Nepodarilo sa zmeniť stav dopytu.')
+    }
+  }
 
   function step(delta: number) {
     setAnchor((prev) => (mode === 'week' ? addDays(prev, delta * 7) : new Date(prev.getFullYear(), prev.getMonth() + delta, 1)))
@@ -369,6 +404,20 @@ export default function PlanPage() {
             <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.ine}</div>
             <div className="text-slate-500 dark:text-slate-400">iných udalostí</div>
           </div>
+          <button
+            onClick={() => setOnlyOpen((v) => !v)}
+            className={`flex-1 text-left border rounded-lg px-4 py-3 ${
+              onlyOpen
+                ? 'bg-orange-50 dark:bg-orange-950 border-orange-400'
+                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+            }`}
+            title="Zobraziť len nevybavené dopyty"
+          >
+            <div className={`text-2xl font-semibold ${summary.openInquiries > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-900 dark:text-slate-50'}`}>
+              {summary.openInquiries}
+            </div>
+            <div className="text-slate-500 dark:text-slate-400">{onlyOpen ? 'len nevybavené dopyty ✕' : 'nevybavených dopytov'}</div>
+          </button>
         </div>
 
         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
@@ -503,14 +552,30 @@ export default function PlanPage() {
                               onClick={() => !isCustom && !isEditing && navigate(`/inspections/${ev.inspectionId}`)}
                               className={`w-full text-left px-4 py-2.5 flex items-center justify-between gap-3 ${
                                 isCustom ? '' : 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition'
-                              }`}
+                              } ${ev.inquiryStage ? STAGE_BORDER[ev.inquiryStage] : ''}`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
-                                <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGE[ev.type]}`}>
-                                  {TYPE_LABEL[ev.type]}
-                                  {ev.type === 'realizacia' && ev.label ? ` ${ev.label}` : ''}
-                                </span>
-                                <span className="truncate text-sm font-medium text-slate-900 dark:text-slate-50">{title}</span>
+                                {ev.inquiryStage ? (
+                                  <select
+                                    value={ev.inquiryStage}
+                                    onClick={(e) => e.stopPropagation()}
+                                    onChange={(e) => handleSetStage(ev, e.target.value as InquiryStage)}
+                                    title="Zmeniť stav dopytu"
+                                    className={`shrink-0 text-[11px] font-semibold pl-2 pr-1 py-0.5 rounded-full border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 ${STAGE_BADGE[ev.inquiryStage]}`}
+                                  >
+                                    {STAGE_ORDER.map((st) => (
+                                      <option key={st} value={st}>
+                                        {INQUIRY_STAGE_LABELS[st]}
+                                      </option>
+                                    ))}
+                                  </select>
+                                ) : (
+                                  <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGE[ev.type]}`}>
+                                    {TYPE_LABEL[ev.type]}
+                                    {ev.type === 'realizacia' && ev.label ? ` ${ev.label}` : ''}
+                                  </span>
+                                )}
+                                <span className={`truncate text-sm font-medium text-slate-900 dark:text-slate-50 ${ev.inquiryStage === 'declined' ? 'line-through' : ''}`}>{title}</span>
                                 {timeLabel && <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeLabel}</span>}
                                 {ev.location && <span className="shrink-0 text-xs text-slate-400">{ev.location}</span>}
                                 {ev.referenceNumber && <span className="shrink-0 text-xs text-slate-400">{ev.referenceNumber}</span>}

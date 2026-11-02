@@ -369,6 +369,10 @@ model CalendarEvent {
   location       String?
   notes          String?
   reminderSentAt DateTime? @map("reminder_sent_at")
+  // Lifecycle of a web inquiry shown in Plán: new | handled | ordered | declined | completed.
+  // NULL for ordinary (non-inquiry) calendar events.
+  inquiryStage   String?   @map("inquiry_stage")
+  webInquiryId   String?   @map("web_inquiry_id")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 

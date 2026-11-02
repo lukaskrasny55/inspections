@@ -1,6 +1,7 @@
 import type {
   AdditionalService,
   CalendarEvent,
+  InquiryStage,
   ChecklistItemCatalog,
   ChecklistItemCategory,
   ChecklistItemSource,
@@ -440,7 +441,7 @@ export async function createCalendarEvent(data: {
 }
 export async function updateCalendarEvent(
   id: string,
-  data: Partial<{ title: string; date: string; startTime: string | null; endTime: string | null; location: string | null; notes: string | null }>,
+  data: Partial<{ title: string; date: string; startTime: string | null; endTime: string | null; location: string | null; notes: string | null; inquiryStage: InquiryStage }>,
 ) {
   return patchJSON<CalendarEvent>(`/api/calendar-events/${id}`, data)
 }

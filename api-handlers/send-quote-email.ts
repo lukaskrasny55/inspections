@@ -4,6 +4,7 @@ import { buildQuoteDocument } from '../lib/quote-document.js'
 import { buildTechnicalDocument } from '../lib/technical-document.js'
 import { convertDocxToPdf } from '../lib/pdf-convert.js'
 import { prisma } from '../lib/prisma.js'
+import { ensureCalendarSchema } from '../lib/ensure-schema.js'
 
 interface ApiRequest extends IncomingMessage {
   body: any
@@ -86,6 +87,20 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     }
   } catch {
     return res.status(502).json({ error: 'Odoslanie emailu zlyhalo.' })
+  }
+
+  // Dopyt zo webu naviazaný na túto obhliadku sa po odoslaní ponuky označí ako vybavený.
+  try {
+    await ensureCalendarSchema()
+    const insp = await prisma.inspection.findUnique({ where: { id: result.alternative.inspectionId }, select: { webInquiryId: true } })
+    if (insp?.webInquiryId) {
+      await prisma.calendarEvent.updateMany({
+        where: { webInquiryId: insp.webInquiryId, inquiryStage: 'new' },
+        data: { inquiryStage: 'handled' },
+      })
+    }
+  } catch {
+    // Označenie stavu je doplnkové - nesmie zhodiť odpoveď o úspešne odoslanej ponuke.
   }
 
   // Kópia pre firmu - nezávislá od úspechu/neúspechu, aby prípadná chyba nevrátila

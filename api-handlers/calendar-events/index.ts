@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import { prisma } from '../../lib/prisma.js'
+import { ensureCalendarSchema } from '../../lib/ensure-schema.js'
 
 interface ApiRequest extends IncomingMessage {
   query: Record<string, string | string[] | undefined>
@@ -16,6 +17,7 @@ function param(value: string | string[] | undefined): string | undefined {
 }
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
+  await ensureCalendarSchema()
   if (req.method === 'GET') {
     const from = param(req.query.from)
     const to = param(req.query.to)

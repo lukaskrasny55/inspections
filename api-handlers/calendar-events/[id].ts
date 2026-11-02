@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import { prisma } from '../../lib/prisma.js'
+import { ensureCalendarSchema, INQUIRY_STAGES } from '../../lib/ensure-schema.js'
 
 interface ApiRequest extends IncomingMessage {
   query: Record<string, string | string[] | undefined>
@@ -14,6 +15,7 @@ interface ApiResponse extends ServerResponse {
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   const idParam = req.query.id
   const id = typeof idParam === 'string' ? idParam : undefined
+  await ensureCalendarSchema()
   if (!id) return res.status(400).json({ error: 'Chýba id.' })
 
   if (req.method === 'PATCH') {
@@ -26,6 +28,13 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     if (body.endTime !== undefined) data.endTime = body.endTime ? String(body.endTime).trim() : null
     if (body.location !== undefined) data.location = body.location ? String(body.location).trim() : null
     if (body.notes !== undefined) data.notes = body.notes ? String(body.notes).trim() : null
+
+    if (body.inquiryStage !== undefined) {
+      if (typeof body.inquiryStage !== 'string' || !(INQUIRY_STAGES as readonly string[]).includes(body.inquiryStage)) {
+        return res.status(400).json({ error: 'Neplatný stav dopytu.' })
+      }
+      data.inquiryStage = body.inquiryStage
+    }
 
     try {
       const event = await prisma.calendarEvent.update({ where: { id }, data })

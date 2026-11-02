@@ -217,6 +217,17 @@ export interface PlanEvent {
   label: string | null
   title: string | null
   notes: string | null
+  inquiryStage: InquiryStage | null
+}
+
+export type InquiryStage = 'new' | 'handled' | 'ordered' | 'declined' | 'completed'
+
+export const INQUIRY_STAGE_LABELS: Record<InquiryStage, string> = {
+  new: 'Nový dopyt',
+  handled: 'Vybavený',
+  ordered: 'Objednávka',
+  declined: 'Zamietnutý',
+  completed: 'Zrealizované',
 }
 
 export interface CalendarEvent {
@@ -227,6 +238,7 @@ export interface CalendarEvent {
   endTime: string | null
   location: string | null
   notes: string | null
+  inquiryStage?: InquiryStage | null
 }
 
 export interface InspectionDetail extends InspectionListItem {

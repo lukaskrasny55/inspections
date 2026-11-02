@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import { prisma } from '../lib/prisma.js'
+import { ensureCalendarSchema } from '../lib/ensure-schema.js'
 
 interface ApiRequest extends IncomingMessage {
   query: Record<string, string | string[] | undefined>
@@ -93,9 +94,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     },
   })
 
+  await ensureCalendarSchema()
   const event = await prisma.calendarEvent.create({
     data: {
       title: `Nový dopyt: ${name}`,
+      inquiryStage: 'new',
+      webInquiryId: inquiry.id,
       date: todayAtMidnight(),
       notes: buildNotes({ message, email, phone, address, source }),
     },
