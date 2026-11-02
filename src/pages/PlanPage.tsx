@@ -330,7 +330,7 @@ export default function PlanPage() {
   const pdfUrl = `/api/generate-plan-document?from=${toISODate(from)}&to=${toISODate(to)}`
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-900">
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
@@ -391,22 +391,22 @@ export default function PlanPage() {
           </div>
         </div>
 
-        <div className="flex gap-3 text-sm">
-          <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <div className="min-w-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
             <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.obhliadky}</div>
             <div className="text-slate-500 dark:text-slate-400">obhliadok v tomto období</div>
           </div>
-          <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+          <div className="min-w-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
             <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.realizacie}</div>
             <div className="text-slate-500 dark:text-slate-400">realizácií v tomto období</div>
           </div>
-          <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
+          <div className="min-w-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3">
             <div className="text-2xl font-semibold text-slate-900 dark:text-slate-50">{summary.ine}</div>
             <div className="text-slate-500 dark:text-slate-400">iných udalostí</div>
           </div>
           <button
             onClick={() => setOnlyOpen((v) => !v)}
-            className={`flex-1 text-left border rounded-lg px-4 py-3 ${
+            className={`min-w-0 text-left border rounded-lg px-4 py-3 ${
               onlyOpen
                 ? 'bg-orange-50 dark:bg-orange-950 border-orange-400'
                 : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
