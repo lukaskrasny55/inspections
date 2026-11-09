@@ -4,6 +4,7 @@ import {
   createCalendarEvent,
   deleteCalendarEvent,
   fetchPlan,
+  scheduleInquiryVisit,
   updateCalendarEvent,
   updateInspection,
   updateQuoteAlternative,
@@ -135,6 +136,12 @@ export default function PlanPage() {
   const [savingEdit, setSavingEdit] = useState(false)
   const [onlyOpen, setOnlyOpen] = useState(false)
 
+  // Scheduling a site visit straight from an inquiry card.
+  const [visitFor, setVisitFor] = useState<PlanEvent | null>(null)
+  const [visitForm, setVisitForm] = useState({ date: '', time: '' })
+  const [visitError, setVisitError] = useState<string | null>(null)
+  const [savingVisit, setSavingVisit] = useState(false)
+
   const { from, to } = useMemo(() => rangeForMode(mode, anchor), [mode, anchor])
 
   const loadEvents = useCallback(() => {
@@ -171,7 +178,7 @@ export default function PlanPage() {
   const eventsByDay = useMemo(() => {
     const map = new Map<string, PlanEvent[]>()
     for (const ev of events) {
-      if (onlyOpen && ev.inquiryStage !== 'new') continue
+      if (onlyOpen && !(ev.type === 'ine' && ev.inquiryStage === 'new')) continue
       const start = new Date(ev.date)
       const end = ev.endDate ? new Date(ev.endDate) : start
       const cursor = new Date(start)
@@ -192,7 +199,7 @@ export default function PlanPage() {
     const obhliadky = events.filter((e) => e.type === 'obhliadka').length
     const realizacie = events.filter((e) => e.type === 'realizacia').length
     const ine = events.filter((e) => e.type === 'ine').length
-    const openInquiries = events.filter((e) => e.inquiryStage === 'new').length
+    const openInquiries = events.filter((e) => e.type === 'ine' && e.inquiryStage === 'new').length
     return { obhliadky, realizacie, ine, openInquiries }
   }, [events])
 
@@ -204,6 +211,32 @@ export default function PlanPage() {
     } catch (err) {
       setEvents(previous)
       setError(err instanceof Error ? err.message : 'Nepodarilo sa zmeniť stav dopytu.')
+    }
+  }
+
+  function startVisit(ev: PlanEvent) {
+    setVisitFor(ev)
+    setEditingEvent(null)
+    setVisitError(null)
+    setVisitForm({ date: ev.linkedVisit ? toISODate(new Date(ev.linkedVisit.date)) : '', time: ev.linkedVisit?.time ?? '' })
+  }
+
+  async function handleSaveVisit() {
+    if (!visitFor) return
+    if (!visitForm.date) {
+      setVisitError('Dátum obhliadky je povinný.')
+      return
+    }
+    setVisitError(null)
+    setSavingVisit(true)
+    try {
+      await scheduleInquiryVisit({ calendarEventId: rawId(visitFor), date: visitForm.date, time: visitForm.time || null })
+      setVisitFor(null)
+      loadEvents()
+    } catch (err) {
+      setVisitError(err instanceof Error ? err.message : 'Nepodarilo sa naplánovať obhliadku.')
+    } finally {
+      setSavingVisit(false)
     }
   }
 
@@ -555,7 +588,7 @@ export default function PlanPage() {
                               } ${ev.inquiryStage ? STAGE_BORDER[ev.inquiryStage] : ''}`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
-                                {ev.inquiryStage ? (
+                                {ev.type === 'ine' && ev.inquiryStage ? (
                                   <select
                                     value={ev.inquiryStage}
                                     onClick={(e) => e.stopPropagation()}
@@ -570,7 +603,8 @@ export default function PlanPage() {
                                     ))}
                                   </select>
                                 ) : (
-                                  <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGE[ev.type]}`}>
+                                  <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${ev.inquiryStage ? STAGE_BADGE[ev.inquiryStage] : TYPE_BADGE[ev.type]}`}>
+                                    {ev.inquiryStage && '🔗 '}
                                     {TYPE_LABEL[ev.type]}
                                     {ev.type === 'realizacia' && ev.label ? ` ${ev.label}` : ''}
                                   </span>
@@ -579,6 +613,13 @@ export default function PlanPage() {
                                 {timeLabel && <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeLabel}</span>}
                                 {ev.location && <span className="shrink-0 text-xs text-slate-400">{ev.location}</span>}
                                 {ev.referenceNumber && <span className="shrink-0 text-xs text-slate-400">{ev.referenceNumber}</span>}
+                                {ev.type === 'obhliadka' && ev.webInquiryId && <span className="shrink-0 text-xs text-slate-400">z webového dopytu</span>}
+                                {ev.type === 'ine' && ev.linkedVisit && (
+                                  <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${ev.inquiryStage ? STAGE_BADGE[ev.inquiryStage] : TYPE_BADGE.obhliadka}`}>
+                                    🔗 Obhliadka {new Date(ev.linkedVisit.date).getDate()}. {new Date(ev.linkedVisit.date).getMonth() + 1}.
+                                    {ev.linkedVisit.time ? ` ${ev.linkedVisit.time}` : ''}
+                                  </span>
+                                )}
                               </div>
                               <div className="flex items-center gap-2 shrink-0">
                                 {ev.technicianName && (
@@ -595,6 +636,18 @@ export default function PlanPage() {
                                     {(technicianCounts.get(ev.technicianName) ?? 0) > 1 && '⚠ '}
                                     {ev.technicianName}
                                   </span>
+                                )}
+                                {isCustom && ev.webInquiryId && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      visitFor?.id === ev.id ? setVisitFor(null) : startVisit(ev)
+                                    }}
+                                    className="text-xs font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700"
+                                    title="Naplánovať obhliadku k tomuto dopytu"
+                                  >
+                                    📅 {ev.linkedVisit ? 'Zmeniť' : 'Obhliadka'}
+                                  </button>
                                 )}
                                 <button
                                   onClick={(e) => {
@@ -618,6 +671,47 @@ export default function PlanPage() {
                                 </button>
                               </div>
                             </div>
+
+                            {visitFor?.id === ev.id && (
+                              <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 space-y-3">
+                                <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                                  {ev.linkedVisit ? 'Zmeniť termín obhliadky' : 'Termín obhliadky'} – zobrazí sa v pláne rovnakou farbou ako tento dopyt
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Dátum</label>
+                                    <input
+                                      type="date"
+                                      value={visitForm.date}
+                                      onChange={(e) => setVisitForm((f) => ({ ...f, date: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Čas</label>
+                                    <input
+                                      type="time"
+                                      value={visitForm.time}
+                                      onChange={(e) => setVisitForm((f) => ({ ...f, time: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    />
+                                  </div>
+                                </div>
+                                {visitError && <div className="text-red-600 dark:text-red-400 text-xs">{visitError}</div>}
+                                <div className="flex items-center gap-3">
+                                  <button
+                                    onClick={handleSaveVisit}
+                                    disabled={savingVisit}
+                                    className="px-4 py-2 rounded-md text-sm font-medium bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 disabled:opacity-50"
+                                  >
+                                    {savingVisit ? 'Ukladám…' : 'Uložiť obhliadku'}
+                                  </button>
+                                  <button onClick={() => setVisitFor(null)} className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">
+                                    Zrušiť
+                                  </button>
+                                </div>
+                              </div>
+                            )}
 
                             {isEditing && (
                               <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 space-y-3">

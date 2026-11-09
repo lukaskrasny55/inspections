@@ -27,6 +27,8 @@ export interface PlanEvent {
   title: string | null
   notes: string | null
   inquiryStage: string | null
+  webInquiryId: string | null
+  linkedVisit: { inspectionId: string; date: string; time: string | null } | null
 }
 
 function param(value: string | string[] | undefined): string | undefined {
@@ -73,6 +75,8 @@ export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise
       title: null,
       notes: null,
       inquiryStage: null,
+      webInquiryId: insp.webInquiryId,
+      linkedVisit: null,
     })
   }
 
@@ -94,6 +98,8 @@ export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise
       title: null,
       notes: null,
       inquiryStage: null,
+      webInquiryId: null,
+      linkedVisit: null,
     })
   }
 
@@ -115,7 +121,38 @@ export async function fetchPlanEvents(range?: { gte: Date; lte: Date }): Promise
       notes: ev.notes,
       // Inquiries created before stages existed have no stage stored; treat them as still new.
       inquiryStage: ev.inquiryStage ?? (ev.title.startsWith('Nový dopyt') ? 'new' : null),
+      webInquiryId: ev.webInquiryId,
+      linkedVisit: null,
     })
+  }
+
+  // Tie each agreed site visit to its originating inquiry: the visit takes the
+  // inquiry's stage (so both share a colour) and the inquiry shows its visit.
+  const linkedInquiryIds = [
+    ...events.filter((e) => e.type === 'obhliadka' && e.webInquiryId).map((e) => e.webInquiryId as string),
+    ...events.filter((e) => e.type === 'ine' && e.webInquiryId).map((e) => e.webInquiryId as string),
+  ]
+  if (linkedInquiryIds.length > 0) {
+    const [inquiryEvents, visits] = await Promise.all([
+      prisma.calendarEvent.findMany({ where: { webInquiryId: { in: linkedInquiryIds } } }),
+      prisma.inspection.findMany({
+        where: { webInquiryId: { in: linkedInquiryIds }, inspectionDate: { not: null } },
+        select: { id: true, webInquiryId: true, inspectionDate: true, inspectionTime: true },
+      }),
+    ])
+    const stageByInquiry = new Map(inquiryEvents.map((e) => [e.webInquiryId as string, e.inquiryStage ?? 'new']))
+    const visitByInquiry = new Map(visits.map((v) => [v.webInquiryId as string, v]))
+    for (const e of events) {
+      if (!e.webInquiryId) continue
+      if (e.type === 'obhliadka') {
+        e.inquiryStage = stageByInquiry.get(e.webInquiryId) ?? null
+      } else if (e.type === 'ine') {
+        const v = visitByInquiry.get(e.webInquiryId)
+        if (v?.inspectionDate) {
+          e.linkedVisit = { inspectionId: v.id, date: v.inspectionDate.toISOString(), time: v.inspectionTime }
+        }
+      }
+    }
   }
 
   events.sort((a, b) => a.date.localeCompare(b.date))

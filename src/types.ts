@@ -218,6 +218,8 @@ export interface PlanEvent {
   title: string | null
   notes: string | null
   inquiryStage: InquiryStage | null
+  webInquiryId: string | null
+  linkedVisit: { inspectionId: string; date: string; time: string | null } | null
 }
 
 export type InquiryStage = 'new' | 'handled' | 'ordered' | 'declined' | 'completed'

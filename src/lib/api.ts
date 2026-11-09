@@ -154,6 +154,19 @@ export async function duplicateInspection(sourceId: string): Promise<InspectionL
   return data
 }
 
+// Schedules the site visit agreed for a web inquiry. Needs a live connection
+// (it creates a linked zákazka server-side), so it is not queued offline.
+export async function scheduleInquiryVisit(data: { calendarEventId: string; date: string; time: string | null }): Promise<{ inspectionId: string }> {
+  const res = await fetch('/api/inquiry-visit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || 'Nepodarilo sa naplánovať obhliadku.')
+  return body
+}
+
 export async function updateCustomer(id: string, data: Partial<Pick<Customer, 'name' | 'address' | 'siteAddress' | 'phone' | 'email' | 'buildingAdmin'>>) {
   return patchJSON<Customer>(`/api/customers/${id}`, data)
 }

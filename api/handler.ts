@@ -71,6 +71,7 @@ import technicalSolutionItems from '../api-handlers/technical-solution-items/ind
 import technicalSolutionItemsId from '../api-handlers/technical-solution-items/[id].js'
 import technicians from '../api-handlers/technicians/index.js'
 import techniciansId from '../api-handlers/technicians/[id].js'
+import inquiryVisit from '../api-handlers/inquiry-visit.js'
 import webInquiry from '../api-handlers/web-inquiry.js'
 import workSummary from '../api-handlers/work-summary.js'
 
@@ -119,6 +120,7 @@ const STATIC_ROUTES: Record<string, Handler> = {
   'send-reminders': sendReminders,
   'technical-solution-items': technicalSolutionItems,
   technicians: technicians,
+  'inquiry-visit': inquiryVisit,
   'web-inquiry': webInquiry,
   'work-summary': workSummary,
 }
