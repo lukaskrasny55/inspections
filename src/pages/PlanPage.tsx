@@ -371,12 +371,20 @@ export default function PlanPage() {
           </Link>
         </div>
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Plán</h1>
-        <a
-          href={pdfUrl}
-          className="text-sm font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 flex items-center gap-1"
-        >
-          ⬇ PDF
-        </a>
+        <div className="flex items-center gap-4">
+          <Link
+            to="/plan/statistika"
+            className="text-sm font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200"
+          >
+            📊 Štatistika
+          </Link>
+          <a
+            href={pdfUrl}
+            className="text-sm font-medium text-brand-600 dark:text-brand-300 hover:text-brand-700 dark:hover:text-brand-200 flex items-center gap-1"
+          >
+            ⬇ PDF
+          </a>
+        </div>
       </header>
 
       <main className="max-w-3xl mx-auto p-6 space-y-4">

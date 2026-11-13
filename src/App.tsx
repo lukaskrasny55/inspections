@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import InspectionsListPage from './pages/InspectionsListPage'
 import InspectionDetailPage from './pages/InspectionDetailPage'
 import PlanPage from './pages/PlanPage'
+import PlanStatsPage from './pages/PlanStatsPage'
 import SummaryPage from './pages/SummaryPage'
 import CompanySettingsPage from './pages/CompanySettingsPage'
 import KatalogPage from './pages/KatalogPage'
@@ -24,7 +25,8 @@ export default function App() {
           <Route path="/" element={<InspectionsListPage />} />
           <Route path="/inspections/:id" element={<InspectionDetailPage />} />
           <Route path="/plan" element={<PlanPage />} />
-          <Route path="/summary" element={<SummaryPage />} />
+          <Route path="/plan/statistika" element={<PlanStatsPage />} />
+          <Route path="/summary"element={<SummaryPage />} />
           <Route path="/navod" element={<NavodPage />} />
           <Route path="/settings/company" element={<CompanySettingsPage />} />
           <Route path="/settings/katalog" element={<KatalogPage />} />
